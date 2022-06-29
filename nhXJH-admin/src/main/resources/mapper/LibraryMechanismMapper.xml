@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nhXJH.web.mapper.LibraryMechanismMapper">
+    
+    <resultMap type="com.nhXJH.web.domain.LibraryMechanism" id="LibraryMechanismResult">
+        <result property="id"    column="id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="email"    column="email"    />
+        <result property="phone"    column="phone"    />
+        <result property="addr"    column="addr"    />
+        <result property="mark"    column="mark"    />
+        <result property="status"    column="status"    />
+        <result property="isDel"    column="is_del"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createPersonal"    column="create_personal"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updatePersonal"    column="update_personal"    />
+    </resultMap>
+
+    <sql id="selectLibraryMechanismVo">
+        select id, dept_id, email, phone, addr,mark,is_del, status, create_time, create_personal, update_time, update_personal from library_mechanism
+    </sql>
+    <select id="getCount" parameterType="com.nhXJH.web.domain.param.MechanismParam" resultType="Integer">
+        select count(id) from library_mechanism
+        <where>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="deptName != null ">
+                and dept_id in
+                (select ad.dept_id from sys_dept as ad where ad.dept_name like concat('%',#{deptName},'%') and ad.parent_id = 0 and ad.status = 0 and ad.del_flag = 0)
+            </if>
+            <if test="email != null  and email != ''"> and email like concat('%',#{email},'%')</if>
+            <if test="phone != null  and phone != ''"> and phone like concat('%',#{phone},'%')</if>
+            <if test="addr != null  and addr != ''"> and addr like concat('%',#{addr},'%')</if>
+            <if test="mark != null  and mark != ''"> and mark like concat('%',#{mark},'%')</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="createPersonal != null "> and create_personal = #{createPersonal}</if>
+            <if test="updatePersonal != null "> and update_personal = #{updatePersonal}</if>
+            and is_del='0'
+        </where>
+    </select>
+    <select id="selectLibraryMechanismList" parameterType="com.nhXJH.web.domain.param.MechanismParam" resultMap="LibraryMechanismResult">
+        <include refid="selectLibraryMechanismVo"/>
+        <where>  
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="deptName != null ">
+             and dept_id in
+             (select ad.dept_id from sys_dept as ad where ad.dept_name like concat('%',#{deptName},'%') and ad.parent_id = 0 and ad.status = 0 and ad.del_flag = 0)
+            </if>
+            <if test="email != null  and email != ''"> and email like concat('%',#{email},'%')</if>
+            <if test="phone != null  and phone != ''"> and phone like concat('%',#{phone},'%')</if>
+            <if test="addr != null  and addr != ''"> and addr like concat('%',#{addr},'%')</if>
+            <if test="mark != null  and mark != ''"> and mark like concat('%',#{mark},'%')</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="createPersonal != null "> and create_personal = #{createPersonal}</if>
+            <if test="updatePersonal != null "> and update_personal = #{updatePersonal}</if>
+            and is_del='0'
+        </where>
+        order by create_time desc
+    </select>
+    
+    <select id="selectLibraryMechanismById" parameterType="Long" resultMap="LibraryMechanismResult">
+        <include refid="selectLibraryMechanismVo"/>
+        where id = #{id} and is_del = '0'
+    </select>
+        
+    <insert id="insertLibraryMechanism" parameterType="com.nhXJH.web.domain.LibraryMechanism" useGeneratedKeys="true" keyProperty="id">
+        insert into library_mechanism
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="email != null">email,</if>
+            <if test="phone != null">phone,</if>
+            <if test="addr != null">addr,</if>
+            <if test="mark != null">mark,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createPersonal != null">create_personal,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updatePersonal != null">update_personal,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="email != null">#{email},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="addr != null">#{addr},</if>
+            <if test="mark != null">#{mark},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createPersonal != null">#{createPersonal},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updatePersonal != null">#{updatePersonal},</if>
+         </trim>
+    </insert>
+
+    <update id="updateLibraryMechanism" parameterType="com.nhXJH.web.domain.LibraryMechanism">
+        update library_mechanism
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="addr != null">addr = #{addr},</if>
+            <if test="mark != null">mark = #{mark},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createPersonal != null">create_personal = #{createPersonal},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updatePersonal != null">update_personal = #{updatePersonal},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="deleteLibraryMechanismById" parameterType="Long">
+        update library_mechanism
+            set is_del = '1',update_time = now() ,update_personal = #{operator} where id = #{id}
+    </update>
+
+    <update id="deleteLibraryMechanismByIds" parameterType="String">
+        update library_mechanism
+        set is_del = '1',update_time = now() ,update_personal = #{operator} where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

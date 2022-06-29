@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nhXJH.web.mapper.SysFileMapper">
+
+    <resultMap type="AttachFile" id="SysFileMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="newName" column="new_name" jdbcType="VARCHAR"/>
+        <result property="groudId" column="groud_id" jdbcType="BIGINT"/>
+        <result property="url" column="url" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="isDel" column="is_del" jdbcType="INTEGER"/>
+        <result property="mark" column="mark" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="createPerson" column="create_person" jdbcType="BIGINT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="delTime" column="del_time" jdbcType="TIMESTAMP"/>
+        <result property="delPerson" column="del_person" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="SysFileMap">
+        select
+          id, `name`, new_name, groud_id,url,`type`, is_del, mark, status, create_person, create_time, del_time, del_person
+        from sys_file
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="SysFileMap">
+        select
+          id, `name`, new_name, groud_id,url,`type`, is_del, mark, status, create_person, create_time, del_time, del_person
+        from sys_file
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and `name` = #{name}
+            </if>
+            <if test="newName != null and newName != ''">
+                and new_name = #{newName}
+            </if>
+            <if test="groudId != null">
+                and groud_id = #{groudId}
+            </if>
+            <if test="url != null and url != ''">
+                and url = #{url}
+            </if>
+            <if test="type != null and type != ''">
+                and `type` = #{type}
+            </if>
+            <if test="isDel != null">
+                and is_del = #{isDel}
+            </if>
+            <if test="mark != null and mark != ''">
+                and mark = #{mark}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="createPerson != null">
+                and create_person = #{createPerson}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="delTime != null">
+                and del_time = #{delTime}
+            </if>
+            <if test="delPerson != null">
+                and del_person = #{delPerson}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from sys_file
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="newName != null and newName != ''">
+                and new_name = #{newName}
+            </if>
+            <if test="groudId != null">
+                and groud_id = #{groudId}
+            </if>
+            <if test="url != null and url != ''">
+                and url = #{url}
+            </if>
+            <if test="type != null and type != ''">
+                and `type` = #{type}
+            </if>
+            <if test="isDel != null">
+                and is_del = #{isDel}
+            </if>
+            <if test="mark != null and mark != ''">
+                and mark = #{mark}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="createPerson != null">
+                and create_person = #{createPerson}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="delTime != null">
+                and del_time = #{delTime}
+            </if>
+            <if test="delPerson != null">
+                and del_person = #{delPerson}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into sys_file(`name`, new_name, groud_id,url,`type`, is_del, mark, status, create_person, create_time, del_time, del_person)
+        values (#{name}, #{newName}, #{groudId},#{url},#{type}, #{isDel}, #{mark}, #{status}, #{createPerson}, #{createTime}, #{delTime}, #{delPerson})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into
+        sys_file
+            (`name`, new_name, groud_id,url,`type`, is_del, mark, status, create_person, create_time, del_time, del_person)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (
+                 #{entity.name},
+                 #{entity.newName},
+                 #{entity.groudId},
+                 #{entity.url},
+                 #{entity.type},
+                 #{entity.isDel},
+                 #{entity.mark},
+                 #{entity.status},
+                 #{entity.createPerson},
+                 #{entity.createTime},
+                 #{entity.delTime},
+                 #{entity.delPerson}
+             )
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into sys_file(`name`, new_name, groud_id,url,`type`, is_del, mark, status, create_person, create_time, del_time, del_person)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.newName}, #{entity.groudId},#{entity.url},#{entity.type}, #{entity.isDel}, #{entity.mark}, #{entity.status}, #{entity.createPerson}, #{entity.createTime}, #{entity.delTime}, #{entity.delPerson})
+        </foreach>
+        on duplicate key update
+        `name` = values(name),
+        new_name = values(new_name),
+        groud_id = values(groud_id),
+        url = values (url),
+        `type` = values (`type`),
+        is_del = values(is_del),
+        mark = values(mark),
+        status = values(status),
+        create_person = values(create_person),
+        create_time = values(create_time),
+        del_time = values(del_time),
+        del_person = values(del_person)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update sys_file
+        <set>
+            <if test="name != null and name != ''">
+                `name` = #{name},
+            </if>
+            <if test="newName != null and newName != ''">
+                new_name = #{newName},
+            </if>
+            <if test="groudId != null">
+                groud_id = #{groudId},
+            </if>
+            <if test="url != null and url != ''">
+                url = #{url},
+            </if>
+            <if test="type != null and type != ''">
+                `type` = #{type},
+            </if>
+            <if test="isDel != null">
+                is_del = #{isDel},
+            </if>
+            <if test="mark != null and mark != ''">
+                mark = #{mark},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="createPerson != null">
+                create_person = #{createPerson},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="delTime != null">
+                del_time = #{delTime},
+            </if>
+            <if test="delPerson != null">
+                del_person = #{delPerson},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from sys_file where id = #{id}
+    </delete>
+
+</mapper>
+

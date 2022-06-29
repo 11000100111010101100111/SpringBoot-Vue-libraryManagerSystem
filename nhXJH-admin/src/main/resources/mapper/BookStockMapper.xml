@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nhXJH.web.mapper.BookStockMapper">
+    
+    <resultMap type="com.nhXJH.web.domain.BookStock" id="BookStockResult">
+        <result property="id"             column="id"    />
+        <result property="bookId"         column="book_id"    />
+        <result property="mechanismId"    column="mechanism_id"    />
+        <result property="entityCode"     column="entity_code"    />
+        <result property="stockLocaltion" column="stock_localtion"    />
+        <result property="hasLoan"        column="has_loan"    />
+        <result property="status"         column="status"    />
+        <result property="isDel"          column="is_del"    />
+        <result property="createTime"     column="create_time"    />
+        <result property="createPersonal" column="create_personal"    />
+        <result property="updateTime"     column="update_time"    />
+        <result property="updatePersonal" column="update_personal"    />
+    </resultMap>
+
+    <sql id="selectBookStockVo">
+        select
+            id,
+            book_id,
+            mechanism_id,
+            entity_code,
+            stock_localtion,
+            has_loan,
+            status,
+            is_del,
+            create_time,
+            create_personal,
+            update_time,
+            update_personal
+        from book_stock
+    </sql>
+    <select id="getCount" parameterType="com.nhXJH.web.domain.BookStock" resultType="Integer">
+        select count(id) from book_stock
+        <where>
+            <if test="bookId != null "> and book_id = #{bookId}</if>
+            <if test="mechanismId != null "> and mechanism_id = #{mechanismId}</if>
+            <if test="entityCode != null  and entityCode != ''"> and entity_code = #{entityCode}</if>
+            <if test="stockLocaltion != null "> and stock_localtion = #{stockLocaltion}</if>
+            <if test="hasLoan != null  and hasLoan != ''"> and has_loan = #{hasLoan}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="isDel != null "> and is_del = #{isDel}</if>
+            <if test="createPersonal != null "> and create_personal = #{createPersonal}</if>
+            <if test="updatePersonal != null "> and update_personal = #{updatePersonal}</if>
+            and is_del = '0'
+        </where>
+    </select>
+    <select id="selectBookStockList" parameterType="com.nhXJH.web.domain.BookStock" resultMap="BookStockResult">
+        <include refid="selectBookStockVo"/>
+        <where>  
+            <if test="bookId != null "> and book_id = #{bookId}</if>
+            <if test="mechanismId != null "> and mechanism_id = #{mechanismId}</if>
+            <if test="entityCode != null  and entityCode != ''"> and entity_code = #{entityCode}</if>
+            <if test="stockLocaltion != null "> and stock_localtion = #{stockLocaltion}</if>
+            <if test="hasLoan != null  and hasLoan != ''"> and has_loan = #{hasLoan}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="isDel != null "> and is_del = #{isDel}</if>
+            <if test="createPersonal != null "> and create_personal = #{createPersonal}</if>
+            <if test="updatePersonal != null "> and update_personal = #{updatePersonal}</if>
+             and is_del = '0'
+        </where>
+    </select>
+    <select id="getStockBook" resultType="java.lang.Long" parameterType="java.lang.Long">
+        SELECT id FROM `book_stock` WHERE book_id = #{bookId} AND is_del='0' AND `status`='1' and has_loan ='0' LIMIT 1
+    </select>
+    <select id="selectBookStockById" parameterType="Long" resultMap="BookStockResult">
+        <include refid="selectBookStockVo"/>
+        where id = #{id} and is_del = '0'
+    </select>
+    <select id="selectBookStockByStockId" parameterType="Long" resultMap="BookStockResult">
+        <include refid="selectBookStockVo"/>
+        where stock_localtion = #{id} and is_del = '0'
+    </select>
+    <insert id="insertBookStock" parameterType="com.nhXJH.web.domain.BookStock" useGeneratedKeys="true" keyProperty="id">
+        insert into book_stock
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="bookId != null">book_id,</if>
+            <if test="mechanismId != null">mechanism_id,</if>
+            <if test="entityCode != null">entity_code,</if>
+            <if test="stockLocaltion != null">stock_localtion,</if>
+            <if test="hasLoan != null">has_loan,</if>
+            <if test="status != null">status,</if>
+            <if test="isDel != null ">is_del,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createPersonal != null">create_personal,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updatePersonal != null">update_personal,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="bookId != null">#{bookId},</if>
+            <if test="mechanismId != null">#{mechanismId},</if>
+            <if test="entityCode != null">#{entityCode},</if>
+            <if test="stockLocaltion != null">#{stockLocaltion},</if>
+            <if test="hasLoan != null">#{hasLoan},</if>
+            <if test="isDel != null ">#{isDel},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createPersonal != null">#{createPersonal},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updatePersonal != null">#{updatePersonal},</if>
+         </trim>
+    </insert>
+    <insert id="bookInStock" parameterType="java.util.List">
+        insert into book_stock
+            (
+                id,
+                book_id,
+                 mechanism_id,
+                 entity_code,
+                stock_localtion,
+                has_loan,
+                status,
+                is_del,
+                create_time,
+                create_personal
+           )
+           values
+        <foreach item="bookStock" collection="list" separator="," >
+            (
+               #{bookStock.id},
+               #{bookStock.bookId},
+               #{bookStock.mechanismId},
+               #{bookStock.entityCode},
+               #{bookStock.stockLocaltion},
+               #{bookStock.hasLoan},
+                #{bookStock.status},
+               #{bookStock.isDel},
+               #{bookStock.createTime},
+               #{bookStock.createPersonal}
+            )
+        </foreach>
+
+    </insert>
+
+    <update id="updateBookStock" parameterType="com.nhXJH.web.domain.BookStock">
+        update book_stock
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="bookId != null">book_id = #{bookId},</if>
+            <if test="mechanismId != null">mechanism_id = #{mechanismId},</if>
+            <if test="entityCode != null">entity_code = #{entityCode},</if>
+            <if test="stockLocaltion != null">stock_localtion = #{stockLocaltion},</if>
+            <if test="hasLoan != null">has_loan = #{hasLoan},</if>
+            <if test="isDel != null ">is_del = #{isDel}</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createPersonal != null">create_personal = #{createPersonal},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updatePersonal != null">update_personal = #{updatePersonal},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="loan" parameterType="com.nhXJH.web.domain.BookStock">
+        update book_stock set has_loan = #{hasLoan},update_personal = #{updatePersonal},update_time=#{updateTime}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBookStockById" parameterType="Long">
+        update book_stock set is_del = '1' where id = #{id}
+    </delete>
+
+    <delete id="deleteBookStockByIds" parameterType="String">
+        update book_stock set is_del = '1' where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

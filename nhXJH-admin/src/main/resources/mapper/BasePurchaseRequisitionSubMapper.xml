@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nhXJH.web.mapper.BasePurchaseRequisitionSubMapper">
+    
+    <resultMap type="com.nhXJH.web.domain.BasePurchaseRequisitionSub" id="BasePurchaseRequisitionSubResult">
+        <result property="id"    column="id"    />
+        <result property="batchId"    column="batch_id"    />
+        <result property="groupId"    column="group_id"    />
+        <result property="entityId"    column="entity_id"    />
+        <result property="entityName"    column="entity_name"    />
+        <result property="purchaseNumber"    column="purchase_number"    />
+        <result property="purchaseOverNumber"    column="purchase_over_number"    />
+        <result property="util"    column="util"    />
+        <result property="utilName"    column="util_name"    />
+        <result property="remark"    column="remark"    />
+        <result property="isDel"    column="is_del"    />
+        <result property="status"    column="status"    />
+        <result property="createPersonal"    column="create_personal"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updatePersonal"    column="update_personal"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBasePurchaseRequisitionSubVo">
+        select
+        id,
+        batch_id,
+        group_id,
+        entity_id,
+        entity_name,
+        purchase_number,
+        purchase_over_number,
+        util,
+        util_name,
+        remark,
+        is_del,
+        status,
+        create_personal,
+        create_time,
+        update_personal,
+        update_time
+        from base_purchase_requisition_sub
+    </sql>
+    <select id="getCount" parameterType="com.nhXJH.web.domain.BasePurchaseRequisitionSub" resultType="Integer">
+        select count(id) from base_purchase_requisition_sub
+        <where>
+            <if test="id != null "> and id = #{id}</if>
+            <if test="batchId != null "> and batch_id = #{batchId}</if>
+            <if test="groupId != null "> and group_id = #{groupId}</if>
+            <if test="entityId != null "> and entity_id = #{entityId}</if>
+            <if test="entityName != null  and entityName != ''"> and entity_name like concat('%', #{entityName}, '%')</if>
+            <if test="purchaseNumber != null "> and purchase_number = #{purchaseNumber}</if>
+            <if test="purchaseOverNumber != null "> and purchase_over_number = #{purchaseOverNumber}</if>
+            <if test="util != null "> and util = #{util}</if>
+            <if test="utilName != null  and utilName != ''"> and util_name like concat('%', #{utilName}, '%')</if>
+            <if test="isDel != null  and isDel != ''"> and is_del = #{isDel}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            and is_del = '0'
+        </where>
+    </select>
+    <select id="selectBasePurchaseRequisitionSubList" parameterType="com.nhXJH.web.domain.BasePurchaseRequisitionSub" resultMap="BasePurchaseRequisitionSubResult">
+        <include refid="selectBasePurchaseRequisitionSubVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="batchId != null "> and batch_id = #{batchId}</if>
+            <if test="groupId != null "> and group_id = #{groupId}</if>
+            <if test="entityId != null "> and entity_id = #{entityId}</if>
+            <if test="entityName != null  and entityName != ''"> and entity_name like concat('%', #{entityName}, '%')</if>
+            <if test="purchaseNumber != null "> and purchase_number = #{purchaseNumber}</if>
+            <if test="purchaseOverNumber != null "> and purchase_over_number = #{purchaseOverNumber}</if>
+            <if test="util != null "> and util = #{util}</if>
+            <if test="utilName != null  and utilName != ''"> and util_name like concat('%', #{utilName}, '%')</if>
+            <if test="isDel != null  and isDel != ''"> and is_del = #{isDel}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            and is_del = '0'
+        </where>
+    </select>
+    <select id="selectSubList" parameterType="com.nhXJH.web.domain.BasePurchaseRequisitionSub" resultMap="BasePurchaseRequisitionSubResult">
+        select
+            bprs.id as id,
+            bprs.batch_id as batch_id,
+            bprs.group_id as group_id,
+            bprs.entity_id as entity_id,
+            bprs.entity_name as entity_name,
+            bprs.purchase_number as purchase_number,
+            bprs.purchase_over_number as purchase_over_number,
+            bprs.util as util,
+            bprs.util_name as util_name,
+            bprs.remark as remark,
+            bprs.is_del as is_del,
+            bprs.status as status,
+            bprs.create_personal as create_personal,
+            bprs.create_time as create_time,
+            bprs.update_personal as update_personal,
+            bprs.update_time as update_time
+            FROM `base_purchase_requisition_sub` AS bprs
+            LEFT JOIN `base_purchase_requisition` AS bpr ON bprs.group_id = bpr.id
+                WHERE bprs.status=#{status} AND bprs.is_del = #{isDel}
+--                   AND bpr.`term_validity`>NOW()
+--                   AND bprs.`purchase_number`>bprs.`purchase_over_number`
+                  AND bpr.`is_del`= #{isDel}
+                  AND bpr.`status`=#{status}
+                  AND (bpr.`purchase_status`= '2' or bpr.`purchase_status`= '3')
+                  AND bpr.id = #{groupId}
+                  AND bpr.`approve_dept` IN (
+                        SELECT bda.dept_id FROM `base_dept_authority` AS bda
+                            WHERE bda.user_id = #{createPersonal}
+                                AND bda.status= #{status}
+                                AND bda.is_del = #{isDel}
+                  )
+
+    </select>
+    
+    <select id="selectBasePurchaseRequisitionSubById" parameterType="Long" resultMap="BasePurchaseRequisitionSubResult">
+        <include refid="selectBasePurchaseRequisitionSubVo"/>
+        where id = #{id} and is_del = '0'
+    </select>
+        
+    <insert id="insertBasePurchaseRequisitionSub" parameterType="com.nhXJH.web.domain.BasePurchaseRequisitionSub"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into base_purchase_requisition_sub
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="groupId != null">group_id,</if>
+            <if test="entityId != null">entity_id,</if>
+            <if test="entityName != null">entity_name,</if>
+            <if test="purchaseNumber != null">purchase_number,</if>
+            <if test="purchaseOverNumber != null">purchase_over_number,</if>
+            <if test="util != null">util,</if>
+            <if test="utilName != null">util_name,</if>
+            <if test="remark != null">remark,</if>
+            <if test="isDel != null">is_del,</if>
+            <if test="status != null">status,</if>
+            <if test="createPersonal != null">create_personal,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updatePersonal != null">update_personal,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="groupId != null">#{groupId},</if>
+            <if test="entityId != null">#{entityId},</if>
+            <if test="entityName != null">#{entityName},</if>
+            <if test="purchaseNumber != null">#{purchaseNumber},</if>
+            <if test="purchaseOverNumber != null">#{purchaseOverNumber},</if>
+            <if test="util != null">#{util},</if>
+            <if test="utilName != null">#{utilName},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="isDel != null">#{isDel},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createPersonal != null">#{createPersonal},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updatePersonal != null">#{updatePersonal},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <insert id="insertList" parameterType="java.util.List" >
+        insert into base_purchase_requisition_sub (
+                id,
+                batch_id,
+                group_id,
+                entity_id,
+                entity_name,
+                purchase_number,
+                purchase_over_number,
+                util,
+                util_name,
+                remark,
+                is_del,
+                status,
+                create_personal,
+                create_time,
+                update_personal,
+                update_time
+        ) values
+        <foreach item="subPurchase" index="index" collection="list" separator=",">
+        (
+                <if test="subPurchase.id != null">#{subPurchase.id},</if>
+                <if test="subPurchase.id == null">null,</if>
+
+                <if test="subPurchase.batchId != null">#{subPurchase.batchId},</if>
+                <if test="subPurchase.batchId == null">-1,</if>
+
+                <if test="subPurchase.groupId != null">#{subPurchase.groupId},</if>
+                 <if test="subPurchase.groupId == null">-1,</if>
+
+                <if test="subPurchase.entityId != null">#{subPurchase.entityId},</if>
+                <if test="subPurchase.entityId == null">-1,</if>
+
+                <if test="subPurchase.entityName != null">#{subPurchase.entityName},</if>
+                <if test="subPurchase.entityName == null">'',</if>
+
+                <if test="subPurchase.purchaseNumber != null">#{subPurchase.purchaseNumber},</if>
+                <if test="subPurchase.purchaseNumber == null">0,</if>
+
+                <if test="subPurchase.purchaseOverNumber != null">#{subPurchase.purchaseOverNumber},</if>
+                <if test="subPurchase.purchaseOverNumber == null">0,</if>
+
+                <if test="subPurchase.util != null">#{subPurchase.util},</if>
+                <if test="subPurchase.util == null">-1,</if>
+
+                <if test="subPurchase.utilName != null">#{subPurchase.utilName},</if>
+                <if test="subPurchase.utilName == null">'',</if>
+
+                <if test="subPurchase.remark != null">#{subPurchase.remark},</if>
+                <if test="subPurchase.remark == null">'',</if>
+
+                <if test="subPurchase.isDel != null">#{subPurchase.isDel},</if>
+                <if test="subPurchase.isDel == null">'0',</if>
+
+                <if test="subPurchase.status != null">#{subPurchase.status},</if>
+                <if test="subPurchase.status == null">'1',</if>
+
+                <if test="subPurchase.createPersonal != null">#{subPurchase.createPersonal},</if>
+                <if test="subPurchase.createPersonal == null">-1,</if>
+
+                <if test="subPurchase.createTime != null">#{subPurchase.createTime},</if>
+                <if test="subPurchase.createTime == null">now(),</if>
+
+                <if test="subPurchase.updatePersonal != null">#{subPurchase.updatePersonal},</if>
+                <if test="subPurchase.updatePersonal == null">-1,</if>
+
+                <if test="subPurchase.updateTime != null">#{subPurchase.updateTime}</if>
+                 <if test="subPurchase.updateTime == null">now()</if>
+                 )
+        </foreach>
+    </insert>
+
+    <update id="updateBasePurchaseRequisitionSub" parameterType="com.nhXJH.web.domain.BasePurchaseRequisitionSub">
+        update base_purchase_requisition_sub
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="groupId != null">group_id = #{groupId},</if>
+            <if test="batchId != null">batch_id = #{batchId},</if>
+            <if test="entityId != null">entity_id = #{entityId},</if>
+            <if test="entityName != null">entity_name = #{entityName},</if>
+            <if test="purchaseNumber != null">purchase_number = #{purchaseNumber},</if>
+            <if test="purchaseOverNumber != null">purchase_over_number = #{purchaseOverNumber},</if>
+            <if test="util != null">util = #{util},</if>
+            <if test="utilName != null">util_name = #{utilName},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="isDel != null">is_del = #{isDel},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createPersonal != null">create_personal = #{createPersonal},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updatePersonal != null">update_personal = #{updatePersonal},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+
+    <update id="delByEntityForAnd" parameterType="com.nhXJH.web.domain.BasePurchaseRequisitionSub">
+        update base_purchase_requisition_sub
+            set is_del = '1',update_time = now() ,update_personal=#{updatePersonal}
+        <where>
+            <if test="id != null "> and id = #{id}</if>
+            <if test="batchId != null "> and batch_id = #{batchId}</if>
+            <if test="groupId != null "> and group_id = #{groupId}</if>
+            <if test="entityId != null "> and entity_id = #{entityId}</if>
+            <if test="entityName != null  and entityName != ''"> and entity_name =  #{entityName}</if>
+            <if test="purchaseNumber != null "> and purchase_number = #{purchaseNumber}</if>
+            <if test="purchaseOverNumber != null "> and purchase_over_number = #{purchaseOverNumber}</if>
+            <if test="util != null "> and util = #{util}</if>
+            <if test="utilName != null  and utilName != ''"> and util_name = #{utilName}</if>
+            <if test="isDel != null  and isDel != ''"> and is_del = #{isDel}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </update>
+
+    <update id="deleteBasePurchaseRequisitionSubByIds" parameterType="Long">
+        update base_purchase_requisition_sub
+        set is_del = '1',update_time = now() ,update_personal=#{operator}
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

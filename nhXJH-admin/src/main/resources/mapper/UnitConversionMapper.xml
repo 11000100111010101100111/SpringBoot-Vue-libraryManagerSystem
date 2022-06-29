@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nhXJH.web.mapper.UnitConversionMapper">
+    
+    <resultMap type="com.nhXJH.web.domain.UnitConversion" id="UnitConversionResult">
+        <result property="id"    column="id"    />
+        <result property="code"    column="code"    />
+        <result property="unitName"    column="unit_name"    />
+        <result property="afterUnitName"    column="after_unit_name"    />
+        <result property="unitValue"    column="unit_value"    />
+        <result property="mark"    column="mark"    />
+        <result property="status"    column="status"    />
+        <result property="createPersonal"    column="create_personal"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updatePersonal"    column="update_personal"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectUnitConversionVo">
+        select id, code, unit_name, after_unit_name, unit_value, mark, status, create_personal, create_time, update_personal, update_time from base_unit_conversion
+    </sql>
+    <select id="getCount" parameterType="com.nhXJH.web.domain.UnitConversion" resultType="Integer">
+        select count(id) from base_unit_conversion
+        <where>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="unitName != null  and unitName != ''"> and unit_name like concat('%', #{unitName}, '%')</if>
+            <if test="afterUnitName != null  and afterUnitName != ''"> and after_unit_name like concat('%', #{afterUnitName}, '%')</if>
+            <if test="unitValue != null "> and unit_value = #{unitValue}</if>
+            <if test="mark != null  and mark != ''"> and mark = #{mark}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="createPersonal != null "> and create_personal = #{createPersonal}</if>
+            <if test="updatePersonal != null "> and update_personal = #{updatePersonal}</if>
+        </where>
+    </select>
+    <select id="selectUnitConversionList" parameterType="com.nhXJH.web.domain.UnitConversion" resultMap="UnitConversionResult">
+        <include refid="selectUnitConversionVo"/>
+        <where>  
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="unitName != null  and unitName != ''"> and unit_name like concat('%', #{unitName}, '%')</if>
+            <if test="afterUnitName != null  and afterUnitName != ''"> and after_unit_name like concat('%', #{afterUnitName}, '%')</if>
+            <if test="unitValue != null "> and unit_value = #{unitValue}</if>
+            <if test="mark != null  and mark != ''"> and mark = #{mark}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="createPersonal != null "> and create_personal = #{createPersonal}</if>
+            <if test="updatePersonal != null "> and update_personal = #{updatePersonal}</if>
+        </where>
+    </select>
+    
+    <select id="selectUnitConversionById" parameterType="Long" resultMap="UnitConversionResult">
+        <include refid="selectUnitConversionVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertUnitConversion" parameterType="com.nhXJH.web.domain.UnitConversion" useGeneratedKeys="true" keyProperty="id">
+        insert into base_unit_conversion
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="code != null">code,</if>
+            <if test="unitName != null">unit_name,</if>
+            <if test="afterUnitName != null">after_unit_name,</if>
+            <if test="unitValue != null">unit_value,</if>
+            <if test="mark != null">mark,</if>
+            <if test="status != null">status,</if>
+            <if test="createPersonal != null">create_personal,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updatePersonal != null">update_personal,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="code != null">#{code},</if>
+            <if test="unitName != null">#{unitName},</if>
+            <if test="afterUnitName != null">#{afterUnitName},</if>
+            <if test="unitValue != null">#{unitValue},</if>
+            <if test="mark != null">#{mark},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createPersonal != null">#{createPersonal},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updatePersonal != null">#{updatePersonal},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUnitConversion" parameterType="com.nhXJH.web.domain.UnitConversion">
+        update base_unit_conversion
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="code != null">code = #{code},</if>
+            <if test="unitName != null">unit_name = #{unitName},</if>
+            <if test="afterUnitName != null">after_unit_name = #{afterUnitName},</if>
+            <if test="unitValue != null">unit_value = #{unitValue},</if>
+            <if test="mark != null">mark = #{mark},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createPersonal != null">create_personal = #{createPersonal},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updatePersonal != null">update_personal = #{updatePersonal},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUnitConversionById" parameterType="Long">
+        delete from base_unit_conversion where id = #{id}
+    </delete>
+
+    <delete id="deleteUnitConversionByIds" parameterType="String">
+        delete from base_unit_conversion where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

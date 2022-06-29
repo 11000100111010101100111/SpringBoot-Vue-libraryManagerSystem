@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nhXJH.web.mapper.DbMapMapper">
+    
+    <resultMap type="com.nhXJH.web.domain.DbMap" id="DbMapResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="code"    column="code"    />
+        <result property="mark"    column="mark"    />
+        <result property="isDel"    column="is_del"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createPerson"    column="create_person"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updatePerson"    column="update_person"    />
+    </resultMap>
+
+    <sql id="selectDbMapVo">
+        select id, `name`, code,is_del, mark, create_time, create_person, update_time, update_person from base_db_map
+    </sql>
+
+    <select id="selectDbMapList" parameterType="com.nhXJH.web.domain.DbMap" resultMap="DbMapResult">
+        <include refid="selectDbMapVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="mark != null  and mark != ''"> and mark = #{mark}</if>
+            <if test="createPerson != null "> and create_person = #{createPerson}</if>
+            <if test="updatePerson != null "> and update_person = #{updatePerson}</if>
+                and is_del = '0'</where>
+    </select>
+    <select id="getCount" parameterType="com.nhXJH.web.domain.DbMap" resultType="Integer">
+        select count(id) from base_db_map
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="mark != null  and mark != ''"> and mark = #{mark}</if>
+            <if test="createPerson != null "> and create_person = #{createPerson}</if>
+            <if test="updatePerson != null "> and update_person = #{updatePerson}</if>
+            and is_del = '0'</where>
+    </select>
+    <select id="selectDbMapById" parameterType="Long" resultMap="DbMapResult">
+        <include refid="selectDbMapVo"/>
+        where id = #{id} and is_del = '0'
+    </select>
+        
+    <insert id="insertDbMap" parameterType="com.nhXJH.web.domain.DbMap" useGeneratedKeys="true" keyProperty="id">
+        insert into base_db_map
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">`name`,</if>
+            <if test="code != null">code,</if>
+            <if test="mark != null">mark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createPerson != null">create_person,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updatePerson != null">update_person,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="code != null">#{code},</if>
+            <if test="mark != null">#{mark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createPerson != null">#{createPerson},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updatePerson != null">#{updatePerson},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDbMap" parameterType="com.nhXJH.web.domain.DbMap">
+        update base_db_map
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">`name` = #{name},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="mark != null">mark = #{mark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createPerson != null">create_person = #{createPerson},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updatePerson != null">update_person = #{updatePerson},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDbMapById" parameterType="Long">
+        delete from base_db_map where id = #{id}
+    </delete>
+
+    <delete id="deleteDbMapByIds" parameterType="String">
+        delete from base_db_map where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

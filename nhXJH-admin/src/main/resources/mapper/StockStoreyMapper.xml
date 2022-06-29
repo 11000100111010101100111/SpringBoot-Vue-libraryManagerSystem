@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nhXJH.web.mapper.StockStoreyMapper">
+    
+    <resultMap type="com.nhXJH.web.domain.StockStorey" id="StockStoreyResult">
+        <result property="id"    column="id"    />
+        <result property="code"    column="code"    />
+        <result property="name"    column="name"    />
+        <result property="title"    column="title"    />
+        <result property="bookType"    column="book_type"    />
+        <result property="mark"    column="mark"    />
+        <result property="isDel"    column="is_del"    />
+        <result property="status"    column="status"    />
+        <result property="bookshelf"    column="bookshelf"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createPersonal"    column="create_personal"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updatePersonal"    column="update_personal"    />
+    </resultMap>
+
+    <sql id="selectStockStoreyVo">
+        select
+        id,
+        code,
+        `name`,
+        title,
+        book_type,
+        mark,
+        is_del ,
+        `status`,
+        bookshelf,
+        create_time,
+        create_personal,
+        update_time,
+        update_personal
+        from library_stock_storey
+    </sql>
+    <select id="getCount" parameterType="com.nhXJH.web.domain.StockStorey" resultType="Integer">
+        select count(id) from library_stock_storey
+        <where>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="name != null  and name != ''"> and `name` like concat('%', #{name}, '%')</if>
+            <if test="title != null  and title != ''"> and title  like concat('%', #{title}, '%')</if>
+            <if test="bookType != null "> and book_type = #{bookType}</if>
+            <if test="mark != null  and mark != ''"> and mark like concat('%',  #{mark}, '%')</if>
+            <if test="isDel != null "> and is_del = #{isDel}</if>
+            <if test="status != null "> and `status` = #{status}</if>
+            <if test="bookshelf != null "> and bookshelf = #{bookshelf}</if>
+            <if test="createPersonal != null "> and create_personal = #{createPersonal}</if>
+            <if test="updatePersonal != null "> and update_personal = #{updatePersonal}</if>
+            and is_del = '0'
+        </where>
+    </select>
+    <select id="selectStockStoreyList" parameterType="com.nhXJH.web.domain.StockStorey" resultMap="StockStoreyResult">
+        <include refid="selectStockStoreyVo"/>
+        <where>  
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="name != null  and name != ''"> and `name` like concat('%', #{name}, '%')</if>
+            <if test="title != null  and title != ''"> and title  like concat('%', #{title}, '%')</if>
+            <if test="bookType != null "> and book_type = #{bookType}</if>
+            <if test="mark != null  and mark != ''"> and mark like concat('%',  #{mark}, '%')</if>
+            <if test="isDel != null "> and is_del = #{isDel}</if>
+            <if test="status != null "> and `status` = #{status}</if>
+            <if test="bookshelf != null "> and bookshelf = #{bookshelf}</if>
+            <if test="createPersonal != null "> and create_personal = #{createPersonal}</if>
+            <if test="updatePersonal != null "> and update_personal = #{updatePersonal}</if>
+             and is_del = '0'
+        </where>
+    </select>
+    
+    <select id="selectStockStoreyById" parameterType="Long" resultMap="StockStoreyResult">
+        <include refid="selectStockStoreyVo"/>
+        where id = #{id} and is_del = '0'
+    </select>
+
+    <select id="getStoreyList" parameterType="Long" resultMap="StockStoreyResult">
+        <include refid="selectStockStoreyVo"/>
+        where is_del = '0' and id in
+            <foreach item="id" collection="array" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+    </select>
+
+    <insert id="insertStockStorey" parameterType="com.nhXJH.web.domain.StockStorey" useGeneratedKeys="true" keyProperty="id">
+        insert into library_stock_storey
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="code != null">code,</if>
+            <if test="name != null">`name`,</if>
+            <if test="title != null">title,</if>
+            <if test="bookType != null">book_type,</if>
+            <if test="mark != null">mark,</if>
+            <if test="isDel != null">is_del,</if>
+            <if test="status != null">`status`,</if>
+            <if test="bookshelf != null">bookshelf,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createPersonal != null">create_personal,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updatePersonal != null">update_personal,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="code != null">#{code},</if>
+            <if test="name != null">#{name},</if>
+            <if test="title != null">#{title},</if>
+            <if test="bookType != null">#{bookType},</if>
+            <if test="mark != null">#{mark},</if>
+            <if test="isDel != null">#{isDel},</if>
+            <if test="status != null">#{status},</if>
+            <if test="bookshelf != null">#{bookshelf},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createPersonal != null">#{createPersonal},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updatePersonal != null">#{updatePersonal},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStockStorey" parameterType="com.nhXJH.web.domain.StockStorey">
+        update library_stock_storey
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="code != null">code = #{code},</if>
+            <if test="name != null">`name` = #{name},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="bookType != null">book_type = #{bookType},</if>
+            <if test="mark != null">mark = #{mark},</if>
+            <if test="isDel != null">is_del = #{isDel},</if>
+            <if test="status != null">`status` = #{status},</if>
+            <if test="bookshelf != null">bookshelf = #{bookshelf},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createPersonal != null">create_personal = #{createPersonal},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updatePersonal != null">update_personal = #{updatePersonal},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="deleteStockStoreyById" parameterType="Long">
+        update library_stock_storey set is_del = '1' where id = #{id}
+    </update>
+
+    <update id="deleteStockStoreyByIds" parameterType="Long">
+        update library_stock_storey set is_del = '1' where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="hasBook" resultType="java.lang.Integer" parameterType="Long">
+        select count(id) from book_stock where stock_localtion in (
+            select id from library_stock where store_id = #{id} and is_del = '0'
+        ) and is_del = '0' limit 1
+    </select>
+    <select id="hasBooks" resultMap="StockStoreyResult" parameterType="Long">
+        select
+        lss.id as id,
+        lss.code as code,
+        lss.`name` as name,
+        lss.title as title,
+        lss.book_type as book_type,
+        lss.mark as mark,
+        lss.is_del as is_del,
+        lss.`status` as status,
+        lss.bookshelf as bookshelf,
+        lss.create_time as create_time,
+        lss.create_personal as create_personal,
+        lss.update_time as update_time,
+        lss.update_personal as update_personal
+        from library_stock_storey as lss
+        left join library_stock ls on ls.store_id = lss.id
+        left join book_stock bs on bs.stock_localtion = ls.id
+        where bs.stock_localtion in (
+            select item.id from library_stock as item where item.store_id in
+                <foreach item="id" collection="array" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+                and item.is_del = '0'
+        ) and lss.is_del = '0'
+
+    </select>
+</mapper>

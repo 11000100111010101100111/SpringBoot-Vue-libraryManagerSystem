@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nhXJH.web.mapper.BaseFileMapper">
+    
+    <resultMap type="com.nhXJH.web.domain.BaseFile" id="BaseFileResult">
+        <result property="fileId"    column="file_id"    />
+        <result property="modelId"    column="model_id"    />
+        <result property="dbId"    column="db_id"    />
+        <result property="url"    column="url"    />
+        <result property="type"    column="type"    />
+        <result property="isDel"    column="is_del"    />
+        <result property="mark"    column="mark"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createPerson"    column="create_person"    />
+        <result property="updatePerson"    column="update_person"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBaseFileVo">
+        select
+            file_id,
+             model_id,
+             `type`,
+             db_id,
+             url,
+             mark,
+             `type`,
+             is_del,
+             status,
+             create_time,
+             create_person,
+             update_person,
+             update_time
+         from base_file
+    </sql>
+
+    <select id="selectBaseFileList" parameterType="com.nhXJH.web.domain.BaseFile" resultMap="BaseFileResult">
+        <include refid="selectBaseFileVo"/>
+        <where>  
+            <if test="modelId != null "> and model_id = #{modelId}</if>
+            <if test="dbId != null  and dbId != ''"> and db_id = #{dbId}</if>
+            <if test="url != null  and url != ''"> and url = #{url}</if>
+            <if test="type != null  and type != ''"> and `type` = #{type}</if>
+            <if test="mark != null  and mark != ''"> and mark = #{mark}</if>
+            <if test="isDel != null "> and is_del = #{isDel}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="createPerson != null "> and create_person = #{createPerson}</if>
+            <if test="updatePerson != null "> and update_person = #{updatePerson}</if>
+             and is_del='0'
+        </where>
+    </select>
+    <select id="getCount" parameterType="com.nhXJH.web.domain.BaseFile" resultType="Integer">
+        select count(id) from base_file
+        <where>
+            <if test="modelId != null "> and model_id = #{modelId}</if>
+            <if test="dbId != null  and dbId != ''"> and db_id = #{dbId}</if>
+            <if test="url != null  and url != ''"> and url = #{url}</if>
+            <if test="type != null  and type != ''"> and `type` = #{type}</if>
+            <if test="mark != null  and mark != ''"> and mark = #{mark}</if>
+            <if test="isDel != null "> and is_del = #{isDel}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="createPerson != null "> and create_person = #{createPerson}</if>
+            <if test="updatePerson != null "> and update_person = #{updatePerson}</if>
+            and is_del='0'
+        </where>
+    </select>
+    <select id="selectBaseFileByFileId" parameterType="Long" resultMap="BaseFileResult">
+        <include refid="selectBaseFileVo"/>
+        where file_id = #{fileId} and is_del = '0'
+    </select>
+        
+    <insert id="insertBaseFile" parameterType="com.nhXJH.web.domain.BaseFile" useGeneratedKeys="true" keyProperty="fileId">
+        insert into base_file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fileId != null">file_id,</if>
+            <if test="modelId != null">model_id,</if>
+            <if test="dbId != null">db_id,</if>
+            <if test="type != null">`type`,</if>
+            <if test="url != null">url,</if>
+            <if test="mark != null">mark,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createPerson != null">create_person,</if>
+            <if test="updatePerson != null">update_person,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+         values
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fileId != null">#{fileId},</if>
+            <if test="modelId != null">#{modelId},</if>
+            <if test="dbId != null">#{dbId},</if>
+            <if test="type != null">#{type},</if>
+            <if test="url != null">#{url},</if>
+            <if test="mark != null">#{mark},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createPerson != null">#{createPerson},</if>
+            <if test="updatePerson != null">#{updatePerson},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+    <insert id="insertBaseFiles" parameterType="java.util.List">
+        insert into base_file(
+            file_id,
+            model_id,
+            db_id,
+            `type`,
+            url,
+            mark,
+            create_time,
+            create_person) values
+        <foreach collection="fileList" item="file" index="index" separator="," >
+                (
+                    #{file.fileId},
+                    #{file.modelId},
+                    #{file.dbId},
+                    #{file.type},
+                    #{file.url},
+                    #{file.mark},
+                    #{file.createTime},
+                    #{file.createPerson}
+                )
+        </foreach>
+    </insert>
+    <update id="updateBaseFile" parameterType="com.nhXJH.web.domain.BaseFile">
+        update base_file
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="modelId != null">model_id = #{modelId},</if>
+            <if test="dbId != null">db_id = #{dbId},</if>
+            <if test="type != null">`type` = #{type},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="mark != null">mark = #{mark},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createPerson != null">create_person = #{createPerson},</if>
+            <if test="updatePerson != null">update_person = #{updatePerson},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where file_id = #{fileId}
+    </update>
+
+    <update id="deleteBaseFileByFileId" parameterType="Long">
+        update base_file
+        set is_del = '1',update_time = now() ,update_person=#{operator} where file_id = #{fileId}
+    </update>
+
+    <update id="deleteBaseFileByFileIds" parameterType="Long">
+        update base_file
+        set is_del = '1',update_time = now() ,update_person=#{operator} where file_id in
+        <foreach item="fileId" collection="array" open="(" separator="," close=")">
+            #{fileId}
+        </foreach>
+    </update>
+
+    <select id="getFile" parameterType="com.nhXJH.web.domain.BaseFile" resultType="com.nhXJH.web.domain.vo.FileVo">
+        select
+            bf.file_id as FileId,
+            bf.model_id as modelid,
+            bf.db_id as dbId,
+            bf.`type` as type,
+            bf.url as url,
+            bf.mark as mark,
+            bf.`status` as status,
+            bf.create_person as createPerson,
+            bf.update_person as updatePerson,
+            bf.create_time as createTime,
+            sf.`name` as fileName,
+            sf.`new_name` as newName,
+            sf.`groud_id` as groupId,
+            (select user_name from sys_user as su where su.`status` = 1 and su.`user_id` = bf.`create_person`) as createPersonalName,
+            (select user_name from sys_user as su where su.`status` = 1 and su.`user_id` = bf.`update_person`) as updatePersonalName
+        from base_file as bf
+        left JOIN sys_file as sf on sf.id = bf.file_id
+        where bf.model_id = #{modelId} and bf.`status` = 1 and bf.`db_id` = #{dbId}
+    </select>
+
+
+
+</mapper>

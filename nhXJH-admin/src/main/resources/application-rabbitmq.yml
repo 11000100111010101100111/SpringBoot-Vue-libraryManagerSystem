@@ -1,0 +1,29 @@
+spring:
+  rabbitmq:
+    host: 175.***.***.**
+    port: 15672
+    username: xjh
+    password: '!*********'
+    virtual-host: /xjh
+#    publisher-confirms: true
+    publisher-returns: true
+    # 连接超时 毫秒
+    connection-timeout: 60000
+    # 监听器
+    listener:
+      simple:
+        acknowledge-mode: manual
+        # 最小并发量
+        concurrency: 100
+        # 最大并发量
+        max-concurrency: 1000
+        prefetch: 50
+        retry:
+          # 重试是否可用
+          enabled: true
+      direct:
+        acknowledge-mode: manual
+    # 消息模板
+    template:
+      retry:
+        enabled: true

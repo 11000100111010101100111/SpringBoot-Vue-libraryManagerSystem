@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nhXJH.web.mapper.BasePurchaseNodeMapper">
+    
+    <resultMap type="com.nhXJH.web.domain.BasePurchaseNode" id="BasePurchaseNodeResult">
+        <result property="id"    column="id"    />
+        <result property="nodeCode"    column="node_code"    />
+        <result property="purchaseTemplate"    column="purchase_template"    />
+        <result property="name"    column="name"    />
+        <result property="type"    column="type"    />
+        <result property="mark"    column="mark"    />
+        <result property="isDel"    column="is_del"    />
+        <result property="status"    column="status"    />
+        <result property="createPersonal"    column="create_personal"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updatePersonal"    column="update_personal"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBasePurchaseNodeVo">
+        select
+            id,
+            node_code,
+            purchase_template,
+            `name`,
+            `type`,
+            mark,
+            is_del,
+            status,
+            create_personal,
+            create_time,
+            update_personal,
+            update_time
+        from base_purchase_node
+    </sql>
+    <select id="getCount" parameterType="com.nhXJH.web.domain.BasePurchaseNode" resultType="Integer">
+        select count(id) from base_purchase_node
+        <where>
+            <if test="purchaseTemplate != null "> and purchase_template = #{purchaseTemplate}</if>
+            <if test="name != null  and name != ''"> and `name` like concat('%', #{name}, '%')</if>
+            <if test="type != null  and type != ''"> and `type` = #{type}</if>
+            <if test="nodeCode != null  and nodeCode != ''"> and `node_code` = #{nodeCode}</if>
+            <if test="mark != null  and mark != ''"> and mark = #{mark}</if>
+            <if test="isDel != null  and isDel != ''"> and is_del = #{isDel}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="createPersonal != null "> and create_personal = #{createPersonal}</if>
+            <if test="updatePersonal != null "> and update_personal = #{updatePersonal}</if>
+            and is_del = '0'
+        </where>
+    </select>
+    <select id="selectBasePurchaseNodeList" parameterType="com.nhXJH.web.domain.BasePurchaseNode" resultMap="BasePurchaseNodeResult">
+        <include refid="selectBasePurchaseNodeVo"/>
+        <where>  
+            <if test="purchaseTemplate != null "> and purchase_template = #{purchaseTemplate}</if>
+            <if test="name != null  and name != ''"> and `name` like concat('%', #{name}, '%')</if>
+            <if test="type != null  and type != ''"> and `type` = #{type}</if>
+            <if test="nodeCode != null  and nodeCode != ''"> and `node_code` = #{nodeCode}</if>
+            <if test="mark != null  and mark != ''"> and mark = #{mark}</if>
+            <if test="isDel != null  and isDel != ''"> and is_del = #{isDel}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="createPersonal != null "> and create_personal = #{createPersonal}</if>
+            <if test="updatePersonal != null "> and update_personal = #{updatePersonal}</if>
+             and is_del = '0'
+        </where>
+    </select>
+
+    <select id="selectBasePurchaseNodeByIds" parameterType="Long" resultMap="BasePurchaseNodeResult">
+        <include refid="selectBasePurchaseNodeVo"/>
+        where is_del='0' and id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    
+    <select id="selectBasePurchaseNodeById" parameterType="Long" resultMap="BasePurchaseNodeResult">
+        <include refid="selectBasePurchaseNodeVo"/>
+        where id = #{id} and is_del='0'
+    </select>
+    <insert id="insertList" parameterType="java.util.List" >
+        insert into base_purchase_node (
+        id,
+        node_code,
+        purchase_template,
+        `name`,
+        `type`,
+        mark,
+        is_del,
+        status,
+        create_personal,
+        create_time,
+        update_personal,
+        update_time
+        ) values
+        <foreach item="node" index="index" collection="list" separator=",">
+            (
+            <if test="node.id != null">#{node.id},</if>
+            <if test="node.id == null">null,</if>
+
+            <if test="node.nodeCode != null">#{node.nodeCode},</if>
+            <if test="node.nodeCode == null">-1,</if>
+
+            <if test="node.purchaseTemplate != null">#{node.purchaseTemplate},</if>
+            <if test="node.purchaseTemplate == null">-1,</if>
+
+            <if test="node.name != null">#{node.name},</if>
+            <if test="node.name == null">-1,</if>
+
+            <if test="node.type != null">#{node.type},</if>
+            <if test="node.type == null">'',</if>
+
+            <if test="node.mark != null">#{node.mark},</if>
+            <if test="node.mark == null">0,</if>
+
+            <if test="node.isDel != null">#{node.isDel},</if>
+            <if test="node.isDel == null">'0',</if>
+
+            <if test="node.status != null">#{node.status},</if>
+            <if test="node.status == null">'1',</if>
+
+            <if test="node.createPersonal != null">#{node.createPersonal},</if>
+            <if test="node.createPersonal == null">-1,</if>
+
+            <if test="node.createTime != null">#{node.createTime},</if>
+            <if test="node.createTime == null">now(),</if>
+
+            <if test="node.updatePersonal != null">#{node.updatePersonal},</if>
+            <if test="node.updatePersonal == null">-1,</if>
+
+            <if test="node.updateTime != null">#{node.updateTime}</if>
+            <if test="node.updateTime == null">now()</if>
+            )
+        </foreach>
+    </insert>
+    <insert id="insertBasePurchaseNode" parameterType="com.nhXJH.web.domain.BasePurchaseNode" useGeneratedKeys="true" keyProperty="id">
+        insert into base_purchase_node
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="nodeCode != null">node_code,</if>
+            <if test="purchaseTemplate != null">purchase_template,</if>
+            <if test="name != null and name != ''">`name`,</if>
+            <if test="type != null and type != ''">`type`,</if>
+            <if test="mark != null">mark,</if>
+            <if test="isDel != null">is_del,</if>
+            <if test="status != null">status,</if>
+            <if test="createPersonal != null">create_personal,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updatePersonal != null">update_personal,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="nodeCode != null">#{nodeCode},</if>
+            <if test="purchaseTemplate != null">#{purchaseTemplate},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="type != null and type != ''">#{type},</if>
+            <if test="mark != null">#{mark},</if>
+            <if test="isDel != null">#{isDel},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createPersonal != null">#{createPersonal},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updatePersonal != null">#{updatePersonal},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBasePurchaseNode" parameterType="com.nhXJH.web.domain.BasePurchaseNode">
+        update base_purchase_node
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="purchaseTemplate != null">purchase_template = #{purchaseTemplate},</if>
+            <if test="nodeCode != null and nodeCode != ''">`node_code` = #{nodeCode},</if>
+            <if test="name != null and name != ''">`name` = #{name},</if>
+            <if test="type != null and type != ''">`type` = #{type},</if>
+            <if test="mark != null">mark = #{mark},</if>
+            <if test="isDel != null">is_del = #{isDel},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createPersonal != null">create_personal = #{createPersonal},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updatePersonal != null">update_personal = #{updatePersonal},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="deleteBasePurchaseNodeById" parameterType="Long">
+        update base_purchase_node
+        set is_del = '1',update_time = now() ,update_personal = #{operator} where id = #{id}
+    </update>
+
+    <update id="deleteBasePurchaseNodeByIds" parameterType="String">
+        update base_purchase_node
+        set is_del = '1',update_time = now() ,update_personal = #{operator}  where id
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+
+</mapper>

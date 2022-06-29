@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nhXJH.web.mapper.BookStockLogMapper">
+    
+    <resultMap type="com.nhXJH.web.domain.BookStockLog" id="BookStockLogResult">
+        <result property="id"    column="id"    />
+        <result property="stockId"    column="stock_id"    />
+        <result property="isLoan"    column="is_loan"    />
+        <result property="operateType"    column="operate_type"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="isDel"    column="is_del"    />
+        <result property="createPersonal"    column="create_personal"    />
+        <result property="otherPersonal"    column="other_personal"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updatePersonal"    column="update_personal"    />
+    </resultMap>
+
+    <sql id="selectBookStockLogVo">
+        select
+             id,
+             stock_id,
+             is_loan,
+             operate_type,
+             create_time,
+             create_personal,
+             other_personal,
+             update_time,
+             update_personal
+         from book_stock_log
+    </sql>
+    <select id="getCount" parameterType="com.nhXJH.web.domain.BookStockBrowHistory" resultType="Integer">
+        select count(id) from book_stock_log
+        <where>
+            <if test="stockId != null "> and stock_id = #{stockId}</if>
+            <if test="isLoan != null "> and is_loan = #{isLoan}</if>
+            <if test="isDel != null "> and is_del = #{isDel}</if>
+            <if test="operateType != null  and operateType != ''"> and operate_type = #{operateType}</if>
+            <if test="createPersonal != null "> and create_personal = #{createPersonal}</if>
+            <if test="otherPersonal != null "> and other_personal = #{otherPersonal}</if>
+            <if test="updatePersonal != null "> and update_personal = #{updatePersonal}</if>
+            and is_del ='0'
+        </where>
+    </select>
+    <select id="selectBookStockLogList" parameterType="com.nhXJH.web.domain.BookStockBrowHistory" resultMap="BookStockLogResult">
+        <include refid="selectBookStockLogVo"/>
+        <where>  
+            <if test="stockId != null "> and stock_id = #{stockId}</if>
+            <if test="isLoan != null "> and is_loan = #{isLoan}</if>
+            <if test="isDel != null "> and is_del = #{isDel}</if>
+            <if test="operateType != null  and operateType != ''"> and operate_type = #{operateType}</if>
+            <if test="createPersonal != null "> and create_personal = #{createPersonal}</if>
+            <if test="otherPersonal != null "> and other_personal = #{otherPersonal}</if>
+            <if test="updatePersonal != null "> and update_personal = #{updatePersonal}</if>
+             and is_del ='0'
+        </where>
+    </select>
+    <select id="selectLogsByStockId" parameterType="java.lang.Long" resultMap="BookStockLogResult">
+        <include refid="selectBookStockLogVo"/>
+        where is_del = '0' and stock_id = #{stockId} order by create_time DESC
+    </select>
+    <select id="selectBookStockLogById" parameterType="Long" resultMap="BookStockLogResult">
+        <include refid="selectBookStockLogVo"/>
+        where id = #{id} and is_del = '0'
+    </select>
+    <select id="selectByStockId" parameterType="Long" resultMap="BookStockLogResult">
+        <include refid="selectBookStockLogVo"/>
+        where stock_id = #{id} and is_del = '0' ORDER BY create_time DESC LIMIT 1
+    </select>
+        
+    <insert id="insertBookStockLog" parameterType="com.nhXJH.web.domain.BookStockLog" useGeneratedKeys="true" keyProperty="id">
+        insert into book_stock_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="stockId != null">stock_id,</if>
+            <if test="isLoan != null">is_loan,</if>
+            <if test="isDel != null">is_del,</if>
+            <if test="operateType != null">operate_type,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createPersonal != null">create_personal,</if>
+            <if test="otherPersonal != null">other_personal,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updatePersonal != null">update_personal,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="stockId != null">#{stockId},</if>
+            <if test="isLoan != null">#{isLoan},</if>
+            <if test="isDel != null">#{isDel},</if>
+            <if test="operateType != null">#{operateType},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createPersonal != null">#{createPersonal},</if>
+            <if test="otherPersonal != null">#{otherPersonal},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updatePersonal != null">#{updatePersonal},</if>
+         </trim>
+    </insert>
+    <insert id="insertLog" parameterType="java.util.List" >
+        insert into book_stock_log
+        (
+            id,
+            stock_id,
+            is_loan,
+            is_del,
+            operate_type,
+            create_time,
+            create_personal,
+            other_personal
+        )
+        values
+        <foreach item="log" collection="list" separator=",">
+            (
+                #{log.id},
+                #{log.stockId},
+                #{log.isLoan},
+                #{log.isDel},
+                #{log.operateType},
+                #{log.createTime},
+                #{log.createPersonal},
+                #{log.otherPersonal}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateBookStockLog" parameterType="com.nhXJH.web.domain.BookStockLog">
+        update book_stock_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="stockId != null">stock_id = #{stockId},</if>
+            <if test="isLoan != null">is_loan = #{isLoan},</if>
+            <if test="isDel != null">is_del = #{isDel},</if>
+            <if test="operateType != null">operate_type = #{operateType},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createPersonal != null">create_personal = #{createPersonal},</if>
+            <if test="otherPersonal != null">other_personal = #{otherPersonal},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updatePersonal != null">update_personal = #{updatePersonal},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBookStockLogById" parameterType="Long">
+        update book_stock_log set is_del = '1' where id = #{id}
+    </delete>
+
+    <delete id="deleteBookStockLogByIds" parameterType="String">
+        update book_stock_log set is_del = '1' where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nhXJH.web.mapper.FileTokenMapper">
+    
+    <resultMap type="FileToken" id="FileTokenResult">
+        <result property="id"    column="id"    />
+        <result property="account"    column="account"    />
+        <result property="key"    column="key"    />
+        <result property="mark"    column="mark"    />
+        <result property="usefulLife"    column="useful_life"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createPeraon"    column="create_peraon"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectFileTokenVo">
+        select id, account, `key`, mark, useful_life, create_time, create_peraon, status from base_file_token
+    </sql>
+
+    <select id="selectFileTokenList" parameterType="FileToken" resultMap="FileTokenResult">
+        <include refid="selectFileTokenVo"/>
+        <where>  
+            <if test="account != null  and account != ''"> and account = #{account}</if>
+            <if test="key != null  and key != ''"> and key = #{key}</if>
+            <if test="mark != null  and mark != ''"> and mark = #{mark}</if>
+            <if test="usefulLife != null "> and useful_life = #{usefulLife}</if>
+            <if test="createPeraon != null "> and create_peraon = #{createPeraon}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    <select id="getCount" parameterType="com.nhXJH.web.domain.FileToken" resultType="Integer">
+        select count(id) from base_file_token
+        <where>
+            <if test="account != null  and account != ''"> and account = #{account}</if>
+            <if test="key != null  and key != ''"> and key = #{key}</if>
+            <if test="mark != null  and mark != ''"> and mark = #{mark}</if>
+            <if test="usefulLife != null "> and useful_life = #{usefulLife}</if>
+            <if test="createPeraon != null "> and create_peraon = #{createPeraon}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    <select id="selectFileTokenById" parameterType="Long" resultMap="FileTokenResult">
+        <include refid="selectFileTokenVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFileToken" parameterType="FileToken" useGeneratedKeys="true" keyProperty="id">
+        insert into base_file_token
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="account != null">account,</if>
+            <if test="key != null">`key`,</if>
+            <if test="mark != null">mark,</if>
+            <if test="usefulLife != null">useful_life,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createPeraon != null">create_peraon,</if>
+            <if test="status != null">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="account != null">#{account},</if>
+            <if test="key != null">#{key},</if>
+            <if test="mark != null">#{mark},</if>
+            <if test="usefulLife != null">#{usefulLife},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createPeraon != null">#{createPeraon},</if>
+            <if test="status != null">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFileToken" parameterType="FileToken">
+        update base_file_token
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="account != null">account = #{account},</if>
+            <if test="key != null">`key` = #{key},</if>
+            <if test="mark != null">mark = #{mark},</if>
+            <if test="usefulLife != null">useful_life = #{usefulLife},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createPeraon != null">create_peraon = #{createPeraon},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFileTokenById" parameterType="Long">
+        delete from base_file_token where id = #{id}
+    </delete>
+
+    <delete id="deleteFileTokenByIds" parameterType="String">
+        delete from base_file_token where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

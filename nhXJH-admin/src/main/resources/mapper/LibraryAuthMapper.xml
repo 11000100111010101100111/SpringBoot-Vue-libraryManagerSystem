@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nhXJH.web.mapper.LibraryAuthMapper">
+    
+    <resultMap type="com.nhXJH.web.domain.LibraryAuth" id="LibraryAuthResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="sex"    column="sex"    />
+        <result property="country"    column="country"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="englishName"    column="english_name"    />
+        <result property="synopsis"    column="synopsis"    />
+        <result property="identity"    column="identity"    />
+        <result property="status"    column="status"    />
+        <result property="isDel"    column="is_del"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createPersonal"    column="create_personal"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updatePersonal"    column="update_personal"    />
+    </resultMap>
+
+    <sql id="selectLibraryAuthVo">
+        select
+            id,
+            `name`,
+            sex,
+            country,
+            nick_name,
+            english_name,
+            synopsis,
+            `identity`,
+            is_del,
+            status,
+            create_time,
+            create_personal,
+            update_time,
+            update_personal
+        from library_auth
+    </sql>
+
+    <select id="selectLibraryAuthList" parameterType="com.nhXJH.web.domain.LibraryAuth" resultMap="LibraryAuthResult">
+        <include refid="selectLibraryAuthVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and `name` like concat('%', #{name}, '%')</if>
+            <if test="sex != null "> and sex = #{sex}</if>
+            <if test="country != null  and country != ''"> and country = #{country}</if>
+            <if test="nickName != null  and nickName != ''"> and nick_name like concat('%', #{nickName}, '%')</if>
+            <if test="englishName != null  and englishName != ''"> and english_name like concat('%', #{englishName}, '%')</if>
+            <if test="synopsis != null  and synopsis != ''"> and synopsis like concat('%', #{synopsis}, '%')</if>
+            <if test="identity != null  and identity != ''"> and `identity` like concat('%', #{identity}, '%')</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="createPersonal != null "> and create_personal = #{createPersonal}</if>
+            <if test="updatePersonal != null "> and update_personal = #{updatePersonal}</if>
+                and is_del = '0'</where>
+        order by create_time desc
+    </select>
+    <select id="getCount" parameterType="com.nhXJH.web.domain.LibraryAuth" resultType="Integer">
+        select count(id) from library_auth
+        <where>
+            <if test="name != null  and name != ''"> and `name` like concat('%', #{name}, '%')</if>
+            <if test="sex != null "> and sex = #{sex}</if>
+            <if test="country != null  and country != ''"> and country = #{country}</if>
+            <if test="nickName != null  and nickName != ''"> and nick_name like concat('%', #{nickName}, '%')</if>
+            <if test="englishName != null  and englishName != ''"> and english_name like concat('%', #{englishName}, '%')</if>
+            <if test="synopsis != null  and synopsis != ''"> and synopsis like concat('%', #{synopsis}, '%')</if>
+            <if test="identity != null  and identity != ''"> and `identity` like concat('%', #{identity}, '%')</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="createPersonal != null "> and create_personal = #{createPersonal}</if>
+            <if test="updatePersonal != null "> and update_personal = #{updatePersonal}</if>
+                and is_del = '0'</where>
+    </select>
+    
+    <select id="selectLibraryAuthById" parameterType="Long" resultMap="LibraryAuthResult">
+        <include refid="selectLibraryAuthVo"/>
+        where id = #{id} and is_del = '0'
+    </select>
+        
+    <insert id="insertLibraryAuth" parameterType="com.nhXJH.web.domain.LibraryAuth" useGeneratedKeys="true" keyProperty="id">
+        insert into library_auth
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">`id`,</if>
+            <if test="name != null">`name`,</if>
+            <if test="sex != null">sex,</if>
+            <if test="country != null">country,</if>
+            <if test="nickName != null">nick_name,</if>
+            <if test="englishName != null">english_name,</if>
+            <if test="synopsis != null">synopsis,</if>
+            <if test="identity != null">`identity`,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createPersonal != null">create_personal,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updatePersonal != null">update_personal,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="sex != null">#{sex},</if>
+            <if test="country != null">#{country},</if>
+            <if test="nickName != null">#{nickName},</if>
+            <if test="englishName != null">#{englishName},</if>
+            <if test="synopsis != null">#{synopsis},</if>
+            <if test="identity != null">#{identity},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createPersonal != null">#{createPersonal},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updatePersonal != null">#{updatePersonal},</if>
+         </trim>
+    </insert>
+
+    <update id="updateLibraryAuth" parameterType="com.nhXJH.web.domain.LibraryAuth">
+        update library_auth
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">`name` = #{name},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="country != null">country = #{country},</if>
+            <if test="nickName != null">nick_name = #{nickName},</if>
+            <if test="englishName != null">english_name = #{englishName},</if>
+            <if test="synopsis != null">synopsis = #{synopsis},</if>
+            <if test="identity != null">`identity` = #{identity},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createPersonal != null">create_personal = #{createPersonal},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updatePersonal != null">update_personal = #{updatePersonal},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="deleteLibraryAuthById" parameterType="Long">
+       update library_auth
+            set is_del = '1',update_time = now() ,update_personal = #{operator} where id = #{id}
+    </update>
+
+    <delete id="deleteLibraryAuthByIds" parameterType="Long">
+        update library_auth
+        set is_del = '1',update_time = now() ,update_personal = #{operator}  where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

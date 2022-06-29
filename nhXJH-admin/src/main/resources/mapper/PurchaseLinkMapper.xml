@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nhXJH.web.mapper.PurchaseLinkMapper">
+    
+    <resultMap type="com.nhXJH.web.domain.PurchaseLink" id="PurchaseLinkResult">
+        <result property="id"    column="id"    />
+        <result property="approveId"    column="approve_id"    />
+        <result property="purchaseNode"    column="purchase_node"    />
+        <result property="handlePersonal"    column="handle_personal"    />
+        <result property="handleResult"    column="handle_result"    />
+        <result property="mark"    column="mark"    />
+        <result property="status"    column="status"    />
+        <result property="isDel"    column="is_del"    />
+        <result property="createPersonal"    column="create_personal"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updatePersonal"    column="update_personal"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectPurchaseLinkVo">
+        select
+            id,
+            approve_id,
+            purchase_node,
+            handle_personal,
+            handle_result,
+            mark,
+            status,
+            is_del,
+            create_personal,
+            create_time,
+            update_personal,
+            update_time
+          from base_purchase_link
+    </sql>
+    <select id="getCount" parameterType="com.nhXJH.web.domain.PurchaseLink" resultType="Integer">
+        select count(id) from base_purchase_link
+        <where>
+            and is_del='0'
+            <if test="approveId != null "> and approve_id = #{approveId}</if>
+            <if test="purchaseNode != null "> and purchase_node = #{purchaseNode}</if>
+            <if test="handlePersonal != null "> and handle_personal = #{handlePersonal}</if>
+            <if test="handleResult != null  and handleResult != ''"> and handle_result = #{handleResult}</if>
+            <if test="mark != null  and mark != ''"> and mark = #{mark}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="createPersonal != null "> and create_personal = #{createPersonal}</if>
+            <if test="updatePersonal != null "> and update_personal = #{updatePersonal}</if>
+        </where>
+    </select>
+    <select id="selectPurchaseLinkList" parameterType="com.nhXJH.web.domain.PurchaseLink" resultMap="PurchaseLinkResult">
+        <include refid="selectPurchaseLinkVo"/>
+        <where>
+          and is_del='0'
+            <if test="approveId != null "> and approve_id = #{approveId}</if>
+            <if test="purchaseNode != null "> and purchase_node = #{purchaseNode}</if>
+            <if test="handlePersonal != null "> and handle_personal = #{handlePersonal}</if>
+            <if test="handleResult != null  and handleResult != ''"> and handle_result = #{handleResult}</if>
+            <if test="mark != null  and mark != ''"> and mark = #{mark}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="createPersonal != null "> and create_personal = #{createPersonal}</if>
+            <if test="updatePersonal != null "> and update_personal = #{updatePersonal}</if>
+        </where>
+
+    </select>
+    
+    <select id="selectPurchaseLinkById" parameterType="Long" resultMap="PurchaseLinkResult">
+        <include refid="selectPurchaseLinkVo"/>
+        where id = #{id} and is_del ='0'
+    </select>
+
+    <select id="selectPurchaseLinkByIds" parameterType="Long" resultMap="PurchaseLinkResult">
+        <include refid="selectPurchaseLinkVo"/>
+        where is_del ='0' and  id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+        
+    <insert id="insertPurchaseLink" parameterType="com.nhXJH.web.domain.PurchaseLink" useGeneratedKeys="true" keyProperty="id">
+        insert into base_purchase_link
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="approveId != null">approve_id,</if>
+            <if test="purchaseNode != null">purchase_node,</if>
+            <if test="handlePersonal != null">handle_personal,</if>
+            <if test="handleResult != null">handle_result,</if>
+            <if test="mark != null">mark,</if>
+            <if test="status != null">status,</if>
+            <if test="createPersonal != null">create_personal,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updatePersonal != null">update_personal,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="approveId != null">#{approveId},</if>
+            <if test="purchaseNode != null">#{purchaseNode},</if>
+            <if test="handlePersonal != null">#{handlePersonal},</if>
+            <if test="handleResult != null">#{handleResult},</if>
+            <if test="mark != null">#{mark},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createPersonal != null">#{createPersonal},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updatePersonal != null">#{updatePersonal},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePurchaseLink" parameterType="com.nhXJH.web.domain.PurchaseLink">
+        update base_purchase_link
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="approveId != null">approve_id = #{approveId},</if>
+            <if test="purchaseNode != null">purchase_node = #{purchaseNode},</if>
+            <if test="handlePersonal != null">handle_personal = #{handlePersonal},</if>
+            <if test="handleResult != null">handle_result = #{handleResult},</if>
+            <if test="mark != null">mark = #{mark},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createPersonal != null">create_personal = #{createPersonal},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updatePersonal != null">update_personal = #{updatePersonal},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="deletePurchaseLinkById" parameterType="Long">
+        update base_purchase_link
+        set is_del = '1',update_time = now() ,update_personal = #{operator}  where id = #{id}
+    </update>
+
+    <update id="deletePurchaseLinkByIds" parameterType="Long">
+        update base_purchase_link
+        set is_del = '1',update_time = now() ,update_personal = #{operator}  where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

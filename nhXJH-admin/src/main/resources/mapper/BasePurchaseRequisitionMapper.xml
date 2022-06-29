@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nhXJH.web.mapper.BasePurchaseRequisitionMapper">
+    
+    <resultMap type="com.nhXJH.web.domain.BasePurchaseRequisition" id="BasePurchaseRequisitionResult">
+        <result property="id"    column="id"    />
+        <result property="agoId"    column="ago_id"    />
+        <result property="title"    column="title"    />
+        <result property="approvePersonal"    column="approve_personal"    />
+        <result property="approveDept"    column="approve_dept"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="termValidity"    column="term_validity"    />
+        <result property="purchaseTemplate"    column="purchase_template"    />
+        <result property="purchaseStatus"    column="purchase_status"    />
+        <result property="mark"    column="mark"    />
+        <result property="isDel"    column="is_del"    />
+        <result property="status"    column="status"    />
+        <result property="createPersonal"    column="create_personal"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updatePersonal"    column="update_personal"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBasePurchaseRequisitionVo">
+        select
+            id,
+            ago_id,
+            title,
+            approve_personal,
+            approve_dept,
+            start_time,
+            end_time,
+            term_validity,
+            purchase_template,
+            purchase_status,
+            mark,
+            is_del,
+            status,
+            create_personal,
+            create_time,
+            update_personal,
+            update_time
+        from base_purchase_requisition
+    </sql>
+    <select id="getCount" parameterType="com.nhXJH.web.domain.BasePurchaseRequisition" resultType="Integer">
+        select count(id) from base_purchase_requisition
+        <where>
+            <if test="id != null "> and id = #{id}</if>
+            <if test="agoId != null "> and ago_id = #{agoId}</if>
+            <if test="title != null  and title != ''"> and title like concat('%', #{title}, '%')</if>
+            <if test="approvePersonal != null "> and approve_personal = #{approvePersonal}</if>
+            <if test="approveDept != null "> and approve_dept = #{approveDept}</if>
+            <if test="startTime != null "> and start_time &gt;= #{startTime}</if>
+            <if test="endTime != null "> and end_time &lt;= #{endTime}</if>
+            <if test="termValidity != null "> and term_validity > #{termValidity}</if>
+            <if test="purchaseTemplate != null "> and purchase_template = #{purchaseTemplate}</if>
+            <if test="purchaseStatus != null  and purchaseStatus != ''"> and find_in_set(purchase_status, #{purchaseStatus})</if>
+            <if test="mark != null  and mark != ''"> and mark like concat('%', #{mark}, '%')</if>
+            <if test="isDel != null  and isDel != ''"> and is_del = #{isDel}</if>
+            <if test="status != null "> and status = #{status}</if>
+            and is_del = '0'
+        </where>
+    </select>
+
+    <select id="getMyMatter" parameterType="java.lang.Long" resultType="com.nhXJH.web.domain.vo.MyMatterVO">
+        select
+            baq.id as id,
+            baq.handel_node as handelNode,
+            baq.group_id as groupId,
+            baq.queue_type as queueType,
+            baq.handel_personal as handelPersonal,
+            baq.purchase_id as purchaseId,
+            baq.has_read as hasRead,
+            baq.result as result,
+            bpr.title as title
+        from base_purchase_requisition as bpr
+        left join `base_approval_queue` as baq on baq.`purchase_id` = bpr.id
+        where baq.`status` = '1'
+            and (((baq.`result` = '1' or baq.`result` = '2') and baq.is_del='1') or baq.is_del='0')
+            and baq.handel_personal = #{userId}
+        order by baq.create_time desc
+    </select>
+
+
+
+    <select id="selectBasePurchaseRequisitionList" parameterType="com.nhXJH.web.domain.BasePurchaseRequisition" resultMap="BasePurchaseRequisitionResult">
+        <include refid="selectBasePurchaseRequisitionVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="agoId != null "> and ago_id = #{agoId}</if>
+            <if test="title != null  and title != ''"> and title like concat('%', #{title}, '%')</if>
+            <if test="approvePersonal != null "> and approve_personal = #{approvePersonal}</if>
+            <if test="approveDept != null "> and approve_dept = #{approveDept}</if>
+            <if test="startTime != null "> and start_time &gt;= #{startTime}</if>
+            <if test="endTime != null "> and end_time &lt;= #{endTime}</if>
+            <if test="termValidity != null "> and term_validity > #{termValidity}</if>
+            <if test="purchaseTemplate != null "> and purchase_template = #{purchaseTemplate}</if>
+            <if test="purchaseStatus != null  and purchaseStatus != ''"> and purchase_status = #{purchaseStatus}</if>
+            <if test="mark != null  and mark != ''"> and mark like concat('%', #{mark}, '%')</if>
+            <if test="isDel != null  and isDel != ''"> and is_del = #{isDel}</if>
+            <if test="status != null "> and status = #{status}</if>
+            and is_del = '0'
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="selectApproved" parameterType="com.nhXJH.web.domain.BasePurchaseRequisition" resultMap="BasePurchaseRequisitionResult">
+        <include refid="selectBasePurchaseRequisitionVo"/>
+        WHERE status = #{status}
+            AND is_del = #{isDel}
+            AND `term_validity` > NOW()
+            AND (`purchase_status` = #{purchaseStatus} or `purchase_status` = '3')
+            AND `approve_dept` IN (
+                SELECT bda.dept_id FROM `base_dept_authority` AS bda
+                WHERE bda.user_id = #{createPersonal}
+                AND bda.status= #{status}
+                AND bda.is_del = #{isDel}
+        )
+    </select>
+
+
+    <select id="selectBasePurchaseRequisitionById" parameterType="Long" resultMap="BasePurchaseRequisitionResult">
+        <include refid="selectBasePurchaseRequisitionVo"/>
+        where id = #{id} and is_del = '0'
+    </select>
+        
+    <insert id="insertBasePurchaseRequisition" parameterType="com.nhXJH.web.domain.BasePurchaseRequisition" useGeneratedKeys="true" keyProperty="id">
+        insert into base_purchase_requisition
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="agoId != null ">ago_id,</if>
+            <if test="title != null and title != ''">title,</if>
+            <if test="approvePersonal != null">approve_personal,</if>
+            <if test="approveDept != null">approve_dept,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="termValidity != null">term_validity,</if>
+            <if test="purchaseTemplate != null">purchase_template,</if>
+            <if test="purchaseStatus != null">purchase_status,</if>
+            <if test="mark != null">mark,</if>
+            <if test="isDel != null">is_del,</if>
+            <if test="status != null">status,</if>
+            <if test="createPersonal != null">create_personal,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updatePersonal != null">update_personal,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="agoId != null">#{agoId},</if>
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="approvePersonal != null">#{approvePersonal},</if>
+            <if test="approveDept != null">#{approveDept},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="termValidity != null">#{termValidity},</if>
+            <if test="purchaseTemplate != null">#{purchaseTemplate},</if>
+            <if test="purchaseStatus != null">#{purchaseStatus},</if>
+            <if test="mark != null">#{mark},</if>
+            <if test="isDel != null">#{isDel},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createPersonal != null">#{createPersonal},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updatePersonal != null">#{updatePersonal},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBasePurchaseRequisition" parameterType="com.nhXJH.web.domain.BasePurchaseRequisition">
+        update base_purchase_requisition
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="agoId != null ">ago_id = #{agoId},</if>
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="approvePersonal != null">approve_personal = #{approvePersonal},</if>
+            <if test="approveDept != null">approve_dept = #{approveDept},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="termValidity != null">term_validity = #{termValidity},</if>
+            <if test="purchaseTemplate != null">purchase_template = #{purchaseTemplate},</if>
+            <if test="purchaseStatus != null">purchase_status = #{purchaseStatus},</if>
+            <if test="mark != null">mark = #{mark},</if>
+            <if test="isDel != null">is_del = #{isDel},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createPersonal != null">create_personal = #{createPersonal},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updatePersonal != null">update_personal = #{updatePersonal},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="deleteBasePurchaseRequisitionById" parameterType="Long">
+         update base_purchase_requisition
+            set is_del = '1',update_time = now() ,update_personal=#{operator}
+        where id = #{id}
+    </update>
+
+    <update id="deleteBasePurchaseRequisitionByIds" parameterType="Long">
+        update base_purchase_requisition
+        set is_del = '1',update_time = now() ,update_personal=#{operator}
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+
+    <update id="updateTimeOut" parameterType="java.lang.Long">
+        update base_purchase_requisition set purchase_status = '-2' where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

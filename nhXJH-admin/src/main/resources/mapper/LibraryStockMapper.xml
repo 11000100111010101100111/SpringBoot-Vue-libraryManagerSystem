@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nhXJH.web.mapper.LibraryStockMapper">
+    
+    <resultMap type="com.nhXJH.web.domain.LibraryStock" id="LibraryStockResult">
+        <result property="id"    column="id"    />
+        <result property="stockCode"    column="stock_code"    />
+        <result property="mechanism"    column="mechanism"    />
+        <result property="storeId"    column="store_id"    />
+        <result property="localtion"    column="localtion"    />
+        <result property="hasBook"    column="has_book"    />
+        <result property="url"    column="url"    />
+        <result property="mark"    column="mark"    />
+        <result property="isDel"    column="is_del"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createPersonal"    column="create_personal"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updatePersonal"    column="update_personal"    />
+    </resultMap>
+
+    <sql id="selectLibraryStockVo">
+        select
+            id,
+            stock_code,
+            mechanism,
+            store_id,
+            localtion,
+            has_book,
+            url,
+            mark,
+            `status`,
+            is_del,
+            create_time,
+            create_personal,
+            update_time,
+            update_personal
+        from library_stock
+    </sql>
+    <select id="getCount" parameterType="com.nhXJH.web.domain.LibraryStock" resultType="Integer">
+        select count(id) from library_stock
+        <where>
+            <if test="stockCode != null  and stockCode != ''"> and stock_code = #{stockCode}</if>
+            <if test="mechanism != null "> and mechanism = #{mechanism}</if>
+            <if test="storeId != null "> and store_id = #{storeId}</if>
+            <if test="localtion != null  and localtion != ''"> and localtion = #{localtion}</if>
+            <if test="hasBook != null  and hasBook != ''"> and has_book = #{hasBook}</if>
+            <if test="isDel != null  and isDel != ''"> and is_del = #{isDel}</if>
+            <if test="mark != null  and mark != ''"> and mark = #{mark}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="createPersonal != null "> and create_personal = #{createPersonal}</if>
+            <if test="updatePersonal != null "> and update_personal = #{updatePersonal}</if>
+            and is_del = '0'
+        </where>
+    </select>
+    <select id="selectLibraryStockList" parameterType="com.nhXJH.web.domain.LibraryStock" resultMap="LibraryStockResult">
+        <include refid="selectLibraryStockVo"/>
+        <where>  
+            <if test="stockCode != null  and stockCode != ''"> and stock_code = #{stockCode}</if>
+            <if test="mechanism != null "> and mechanism = #{mechanism}</if>
+            <if test="storeId != null "> and store_id = #{storeId}</if>
+            <if test="localtion != null  and localtion != ''"> and localtion = #{localtion}</if>
+            <if test="hasBook != null  and hasBook != ''"> and has_book = #{hasBook}</if>
+            <if test="isDel != null  and isDel != ''"> and is_del = #{isDel}</if>
+            <if test="mark != null  and mark != ''"> and mark = #{mark}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="createPersonal != null "> and create_personal = #{createPersonal}</if>
+            <if test="updatePersonal != null "> and update_personal = #{updatePersonal}</if>
+                and is_del = '0'
+        </where>
+    </select>
+
+    <select id="getStockList" resultMap="LibraryStockResult">
+         select
+                ls.id as id,
+                ls.stock_code as stock_code,
+                ls.mechanism as mechanism,
+                ls.store_id as store_id,
+                ls.localtion as localtion,
+                ls.has_book as has_book,
+                ls.url as url,
+                ls.mark as mark,
+                ls.`status` as status,
+                ls.is_del as is_del,
+                ls.create_time as create_time,
+                ls.create_personal as create_personal,
+                ls.update_time as update_time,
+                ls.update_personal as update_personal
+            from library_stock AS ls
+        LEFT JOIN `library_stock_storey` AS lss ON ls.`store_id` = lss.id
+          WHERE ls.status= #{status}
+            AND ls.is_del=#{isDel}
+            AND ls.has_book=#{hasBook}
+            AND lss.status=#{status}
+            AND lss.is_del =#{isDel}
+            AND ls.`mechanism` = #{mechanism}
+            AND `book_type`=#{bookType}
+    </select>
+    <select id="getStockListByIds" resultMap="LibraryStockResult" parameterType="Long">
+        <include refid="selectLibraryStockVo"/>
+        where is_del = '0' and id in
+            <foreach item="id" collection="array" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+    </select>
+    <select id="selectLibraryStockById" parameterType="Long" resultMap="LibraryStockResult">
+        <include refid="selectLibraryStockVo"/>
+        where id = #{id} and is_del = '0'
+    </select>
+        
+    <insert id="insertLibraryStock" parameterType="com.nhXJH.web.domain.LibraryStock" useGeneratedKeys="true" keyProperty="id">
+        insert into library_stock
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="stockCode != null">stock_code,</if>
+            <if test="mechanism != null">mechanism,</if>
+            <if test="storeId != null">store_id,</if>
+            <if test="localtion != null">localtion,</if>
+            <if test="hasBook != null">has_book,</if>
+            <if test="url != null">url,</if>
+            <if test="mark != null">mark,</if>
+            <if test="status != null">status,</if>
+            <if test="isDel != null">is_del,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createPersonal != null">create_personal,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updatePersonal != null">update_personal,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="stockCode != null">#{stockCode},</if>
+            <if test="mechanism != null">#{mechanism},</if>
+            <if test="storeId != null">#{storeId},</if>
+            <if test="localtion != null">#{localtion},</if>
+            <if test="hasBook != null">#{hasBook},</if>
+            <if test="url != null">#{url},</if>
+            <if test="mark != null">#{mark},</if>
+            <if test="status != null">#{status},</if>
+            <if test="isDel != null">#{isDel},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createPersonal != null">#{createPersonal},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updatePersonal != null">#{updatePersonal},</if>
+         </trim>
+    </insert>
+    <insert id="insertMoreLibraryStock" parameterType="com.nhXJH.web.domain.LibraryStock" >
+        insert into library_stock(
+            id,
+            stock_code,
+            mechanism,
+            store_id,
+            localtion,
+            has_book,
+            mark,
+            status,
+            is_del,
+            create_time,
+            create_personal
+        )
+        values
+        <foreach item="stock" index="index" collection="list" separator=",">
+                (#{stock.id},
+                #{stock.stockCode},
+                #{stock.mechanism},
+                #{stock.storeId},
+                #{stock.localtion},
+                #{stock.hasBook},
+                #{stock.mark},
+                #{stock.status},
+                #{stock.isDel},
+                #{stock.createTime},
+                #{stock.createPersonal})
+        </foreach>
+    </insert>
+
+    <update id="updateLibraryStock" parameterType="com.nhXJH.web.domain.LibraryStock">
+        update library_stock
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="stockCode != null">stock_code = #{stockCode},</if>
+            <if test="mechanism != null">mechanism = #{mechanism},</if>
+            <if test="storeId != null">store_id = #{storeId},</if>
+            <if test="localtion != null">localtion = #{localtion},</if>
+            <if test="hasBook != null">has_book = #{hasBook},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="mark != null">mark = #{mark},</if>
+            <if test="isDel != null">is_del = #{isDel},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createPersonal != null">create_personal = #{createPersonal},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updatePersonal != null">update_personal = #{updatePersonal},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="inStock" >
+        update library_stock
+            set has_book = #{stock.hasBook},
+                update_time = now(),
+                url=#{stock.url},
+                update_personal = #{stock.updatePersonal}
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="deleteLibraryStockById" parameterType="Long">
+        update library_stock
+            set is_del = '1',update_time = now() ,update_personal = #{operator}  where id = #{id}
+    </update>
+
+    <update id="deleteLibraryStockByIds" parameterType="Long">
+        update library_stock
+        set is_del = '1',update_time = now() ,update_personal = #{operator} where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

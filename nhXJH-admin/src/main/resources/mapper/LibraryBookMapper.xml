@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nhXJH.web.mapper.LibraryBookMapper">
+    
+    <resultMap type="com.nhXJH.web.domain.LibraryBook" id="LibraryBookResult">
+        <result property="id"    column="id"    />
+        <result property="name" column="name"/>
+        <result property="code"    column="code"    />
+        <result property="type"    column="type"    />
+        <result property="leavel"    column="leavel"    />
+        <result property="claz"    column="claz"    />
+        <result property="author"    column="author"    />
+        <result property="mechanism"    column="mechanism"    />
+        <result property="publicationDate"    column="publication_date"    />
+        <result property="version"    column="version"    />
+        <result property="circulation"    column="circulation"    />
+        <result property="isbn"    column="ISBN"    />
+        <result property="series"    column="series"    />
+        <result property="keyWords"    column="key_words"    />
+        <result property="price"    column="price"    />
+        <result property="mark"    column="mark"    />
+        <result property="other"    column="other"    />
+        <result property="isDel"    column="is_del"    />
+        <result property="status"    column="status"    />
+        <result property="createPersonal"    column="create_personal"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updatePersonal"    column="update_personal"    />
+    </resultMap>
+
+    <sql id="selectLibraryBookVo">
+        select
+            id,
+            `name`,
+            code,
+            `type`,
+            leavel,
+            claz,
+            author,
+            mechanism,
+            publication_date,
+            version,
+            circulation,
+            ISBN,
+            series,
+            key_words,
+            price,
+            mark,
+            other,
+            is_del,
+            status,
+            create_personal,
+            create_time,
+            update_time,
+            update_personal
+            from library_book
+    </sql>
+    <select id="getCount" parameterType="com.nhXJH.web.domain.LibraryBook" resultType="Integer">
+        select count(id) from library_book
+        <where>
+            <if test="name != null  and name != ''"> and `name` like concat('%', #{name},'%')</if>
+            <if test="code != null  and code != ''"> and code like concat('%',#{code},'%')</if>
+            <if test="type != null  and type != ''"> and `type` = #{type}</if>
+            <if test="leavel != null  and leavel != ''"> and leavel = #{leavel}</if>
+            <if test="claz != null "> and claz = #{claz}</if>
+            <if test="author != null "> and author = #{author}</if>
+            <if test="mechanism != null "> and mechanism = #{mechanism}</if>
+            <if test="publicationDate != null "> and publication_date = #{publicationDate}</if>
+            <if test="version != null  and version != ''"> and version = #{version}</if>
+            <if test="circulation != null  and circulation != ''"> and circulation = #{circulation}</if>
+            <if test="isbn != null  and isbn != ''"> and ISBN = #{isbn}</if>
+            <if test="series != null  and series != ''"> and series like concat('%', #{series}, '%')</if>
+            <if test="keyWords != null  and keyWords != ''"> and key_words like concat('%', #{keyWords}, '%')</if>
+            <if test="price != null  and price != ''"> and price = #{price}</if>
+            <if test="mark != null  and mark != ''"> and mark = #{mark}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="createPersonal != null "> and create_personal = #{createPersonal}</if>
+            <if test="updatePersonal != null "> and update_personal = #{updatePersonal}</if>
+            and is_del = '0'
+        </where>
+    </select>
+    <select id="selectLibraryBookList" parameterType="com.nhXJH.web.domain.LibraryBook" resultMap="LibraryBookResult">
+        <include refid="selectLibraryBookVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and `name` like concat('%', #{name},'%')</if>
+            <if test="code != null  and code != ''"> and code like concat('%', #{code},'%')</if>
+            <if test="type != null  and type != ''"> and `type` = #{type}</if>
+            <if test="leavel != null  and leavel != ''"> and leavel = #{leavel}</if>
+            <if test="claz != null "> and claz = #{claz}</if>
+            <if test="author != null "> and author = #{author}</if>
+            <if test="mechanism != null "> and mechanism = #{mechanism}</if>
+            <if test="publicationDate != null "> and publication_date = #{publicationDate}</if>
+            <if test="version != null  and version != ''"> and version = #{version}</if>
+            <if test="circulation != null  and circulation != ''"> and circulation = #{circulation}</if>
+            <if test="isbn != null  and isbn != ''"> and ISBN = #{isbn}</if>
+            <if test="series != null  and series != ''"> and series like concat('%', #{series}, '%')</if>
+            <if test="keyWords != null  and keyWords != ''"> and key_words like concat('%', #{keyWords}, '%')</if>
+            <if test="price != null  and price != ''"> and price = #{price}</if>
+            <if test="mark != null  and mark != ''"> and mark = #{mark}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="createPersonal != null "> and create_personal = #{createPersonal}</if>
+            <if test="updatePersonal != null "> and update_personal = #{updatePersonal}</if>
+             and is_del = '0'
+         </where>
+        order by create_time desc
+    </select>
+    
+    <select id="selectLibraryBookById" parameterType="Long" resultMap="LibraryBookResult">
+        <include refid="selectLibraryBookVo"/>
+        where id = #{id} and is_del ='0'
+    </select>
+        
+    <insert id="insertLibraryBook" parameterType="com.nhXJH.web.domain.LibraryBook" useGeneratedKeys="true" keyProperty="id">
+        insert into library_book
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">`name`,</if>
+            <if test="code != null">code,</if>
+            <if test="type != null">`type`,</if>
+            <if test="leavel != null">leavel,</if>
+            <if test="claz != null">claz,</if>
+            <if test="author != null">author,</if>
+            <if test="mechanism != null">mechanism,</if>
+            <if test="publicationDate != null">publication_date,</if>
+            <if test="version != null">version,</if>
+            <if test="circulation != null">circulation,</if>
+            <if test="isbn != null">ISBN,</if>
+            <if test="series != null">series,</if>
+            <if test="keyWords != null">key_words,</if>
+            <if test="price != null">price,</if>
+            <if test="mark != null">mark,</if>
+            <if test="other != null">other,</if>
+            <if test="status != null">status,</if>
+            <if test="createPersonal != null">create_personal,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updatePersonal != null">update_personal,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="code != null">#{code},</if>
+            <if test="type != null">#{type},</if>
+            <if test="leavel != null">#{leavel},</if>
+            <if test="claz != null">#{claz},</if>
+            <if test="author != null">#{author},</if>
+            <if test="mechanism != null">#{mechanism},</if>
+            <if test="publicationDate != null">#{publicationDate},</if>
+            <if test="version != null">#{version},</if>
+            <if test="circulation != null">#{circulation},</if>
+            <if test="isbn != null">#{isbn},</if>
+            <if test="series != null">#{series},</if>
+            <if test="keyWords != null">#{keyWords},</if>
+            <if test="price != null">#{price},</if>
+            <if test="mark != null">#{mark},</if>
+            <if test="other != null">#{other},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createPersonal != null">#{createPersonal},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updatePersonal != null">#{updatePersonal},</if>
+         </trim>
+    </insert>
+
+    <update id="updateLibraryBook" parameterType="com.nhXJH.web.domain.LibraryBook">
+        update library_book
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">`name` = #{name},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="type != null">`type` = #{type},</if>
+            <if test="leavel != null">leavel = #{leavel},</if>
+            <if test="claz != null">claz = #{claz},</if>
+            <if test="author != null">author = #{author},</if>
+            <if test="mechanism != null">mechanism = #{mechanism},</if>
+            <if test="publicationDate != null">publication_date = #{publicationDate},</if>
+            <if test="version != null">version = #{version},</if>
+            <if test="circulation != null">circulation = #{circulation},</if>
+            <if test="isbn != null">ISBN = #{isbn},</if>
+            <if test="series != null">series = #{series},</if>
+            <if test="keyWords != null">key_words = #{keyWords},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="mark != null">mark = #{mark},</if>
+            <if test="other != null">other = #{other},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createPersonal != null">create_personal = #{createPersonal},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updatePersonal != null">update_personal = #{updatePersonal},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="deleteLibraryBookById" parameterType="Long">
+        update library_book
+            set is_del = '1',update_time = now() ,update_personal = #{operator} where id = #{id}
+    </update>
+
+    <update id="deleteLibraryBookByIds" parameterType="String">
+        update library_book
+        set is_del = '1',update_time = now() ,update_personal = #{operator} where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="selectLibraryBookDtoList" parameterType="com.nhXJH.web.domain.LibraryBook" resultType="com.nhXJH.web.domain.dto.LibraryBookDto">
+        select
+            id,
+            `name`,
+            code,
+            `type` as typeCode,
+            leavel,
+            claz as clazId,
+            (select bbcc.`name` from base_book_class_cn as bbcc where claz = bbcc.id) as claz,
+            author as authorId,
+            (select la.`name` from library_auth as la where author = la.id) as author,
+            mechanism as mechanismId,
+            (select lp.`name` from library_press as lp where mechanism = lp.id) as mechanism,
+            publication_date,
+            `version`,
+            circulation,
+            ISBN,
+            series,
+            key_words,
+            price,
+            mark,
+            other,
+            `status`,
+            create_personal as createPersonal,
+            (select su.`user_name` from sys_user as su where create_personal = su.user_id and su.del_flag='0') as createPersonalName,
+            update_personal as updatePersonal,
+            (select su.`user_name` from sys_user as su where update_personal = su.user_id and su.del_flag='0') as updatePersonalName
+        from library_book
+        <where>
+            <if test="name != null  and name != ''"> and `name` = #{name}</if>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="type != null  and type != ''"> and `type` = #{type}</if>
+            <if test="leavel != null  and leavel != ''"> and leavel = #{leavel}</if>
+            <if test="claz != null "> and claz = #{claz}</if>
+            <if test="author != null "> and author = #{author}</if>
+            <if test="mechanism != null "> and mechanism = #{mechanism}</if>
+            <if test="publicationDate != null "> and publication_date = #{publicationDate}</if>
+            <if test="version != null  and version != ''"> and version = #{version}</if>
+            <if test="circulation != null  and circulation != ''"> and circulation = #{circulation}</if>
+            <if test="isbn != null  and isbn != ''"> and ISBN = #{isbn}</if>
+            <if test="series != null  and series != ''"> and series like concat('%', #{series}, '%')</if>
+            <if test="keyWords != null  and keyWords != ''"> and key_words like concat('%', #{keyWords}, '%')</if>
+            <if test="price != null  and price != ''"> and price = #{price}</if>
+            <if test="mark != null  and mark != ''"> and mark = #{mark}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="createPersonal != null "> and create_personal = #{createPersonal}</if>
+            <if test="updatePersonal != null "> and update_personal = #{updatePersonal}</if>
+                and is_del = '0'
+        </where>
+        order by create_time desc
+    </select>
+
+
+    <sql id="queryBook">
+        FROM `library_book` AS lb
+                LEFT JOIN `library_auth` AS la ON la.id = lb.author AND la.status='1' AND la.is_del='0'
+                LEFT JOIN `base_book_class_cn` AS bbcc ON bbcc.id = lb.claz AND bbcc.status='1'
+                LEFT JOIN `library_press` AS lp ON lp.id = lb.`mechanism` AND lp.status='1' AND lp.is_del='0'
+                LEFT JOIN `book_stock` AS bs ON bs.book_id = lb.id AND bs.status='1' AND bs.is_del='0'
+                LEFT JOIN `sys_dept` AS sd ON bs.`mechanism_id`=sd.dept_id AND sd.status='0' AND sd.del_flag='0'
+            WHERE
+                    (
+                        lb.name LIKE concat('%',#{param.keyWords},'%') OR
+                        lb.series LIKE concat('%',#{param.keyWords},'%') OR
+                        lb.key_words LIKE concat('%',#{param.keyWords},'%') OR
+                        lb.mark LIKE concat('%',#{param.keyWords},'%') OR
+                        la.name LIKE concat('%',#{param.keyWords},'%') OR
+                        la.country LIKE concat('%',#{param.keyWords},'%') OR
+                        la.nick_name LIKE concat('%',#{param.keyWords},'%') OR
+                        la.english_name LIKE concat('%',#{param.keyWords},'%') OR
+                        la.synopsis LIKE concat('%',#{param.keyWords},'%') OR
+                        la.identity LIKE concat('%',#{param.keyWords},'%') OR
+                        bbcc.name LIKE concat('%',#{param.keyWords},'%') OR
+                        bbcc.ali_name LIKE concat('%',#{param.keyWords},'%') OR
+                        lp.name LIKE concat('%',#{param.keyWords},'%') OR
+                        lp.addr LIKE concat('%',#{param.keyWords},'%') OR
+                        lp.mark LIKE concat('%',#{param.keyWords},'%') OR
+                        lp.email LIKE concat('%',#{param.keyWords},'%') OR
+                        sd.dept_name LIKE concat('%',#{param.keyWords},'%')
+                    )
+            AND lb.status = '1'
+            AND lb.is_del='0'
+    </sql>
+    <select id="getBookVo"
+            resultType="com.nhXJH.web.domain.vo.BookVO"
+            parameterType="com.nhXJH.web.domain.dto.SearchBookDto">
+        SELECT
+            lb.id as bookId,
+            lb.`name` as bookName,
+            lb.code as bookCode,
+            lb.`type` as bookType,
+            lb.leavel as bookLeavel,
+            lb.claz as bookClaz,
+            lb.author as bookAuthor,
+            lb.mechanism as bookMechanism,
+            lb.publication_date as bookPublicationData,
+            lb.version as bookVersion,
+            lb.circulation as bookCirculation,
+            lb.ISBN as bookISBN,
+            lb.series as bookSeries,
+            lb.key_words as bookKeyWords,
+            lb.price as bookPrice,
+            lb.mark as bookMark,
+            la.name as authName,
+            la.country as authCountry,
+            la.nick_name as authNickName,
+            la.english_name as authEnglishName,
+            la.synopsis as authSynopsis,
+            la.identity as authIdentity,
+            bbcc.code as clazCode,
+            bbcc.name as clazName,
+            lp.name as pressName,
+            lp.addr as pressAddr,
+            lp.mark as pressMark,
+            lp.email as pressEmail,
+            lp.phone as pressPhone,
+            sd.dept_id as deptId,
+            sd.dept_name as deptName,
+            sd.leader as deptLeader,
+            sd.phone as deptPhone,
+            sd.email as deptEmail,
+            (SELECT COUNT(0) FROM book_stock WHERE book_stock.is_del='0' AND book_stock.status='1' AND book_stock.book_id = lb.id) AS saveNumber,
+            (SELECT COUNT(0) FROM book_stock WHERE book_stock.is_del='0' AND book_stock.status='1' AND has_loan='0' AND book_stock.book_id = lb.id) AS nowNumber
+        <include refid="queryBook"/>
+    </select>
+</mapper>
